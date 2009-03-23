@@ -1,0 +1,37 @@
+<lift:surround with="default" at="content">
+    <h2>Users list</h2>
+    Korisnika je trenutno u bazi: <lift:userList.userCount>Broj korisnika</lift:userList.userCount>
+
+    <style>
+        /* <![CDATA[ */
+        #userList table tr td {
+            border: 1px solid;
+        }
+        /* ]]> */
+    </style>
+
+    <lift:userList.list>
+        <div id="userList">
+            <h3>Ovo je lista korisnika</h3>
+            <table>
+                <list:entry>
+                    <tr>
+                        <td><user:firstName>Ime</user:firstName></td>
+                        <td><user:lastName>Prezime</user:lastName></td>
+                    </tr>
+                </list:entry>
+            </table>
+        </div>
+    </lift:userList.list>
+
+    <hr/>
+
+    <div>
+        <p><lift:ajaxTest.ajaxCounterInc1 /></p>
+        <p><lift:ajaxTest.ajaxCounterInc2 /></p>
+        <p><lift:ajaxTest.ajaxCounterShow1 /></p>
+        <p><lift:ajaxTest.ajaxCounterShow2 /></p>
+    </div>
+
+</lift:surround>
+
