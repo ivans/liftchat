@@ -22,20 +22,19 @@ class UserList {
 
     def userCount = <span>{User.count}</span>
 
-    def list(xhtml : NodeSeq) = {
-        println (xhtml)
-        User.findAll match {
-            case List() => <span>No users</span>
-            case useri : List[User] => {
-                    val entries : NodeSeq = useri.flatMap({user =>
-                            bind("user", chooseTemplate("list", "entry", xhtml),
-                                 "firstName" -> <span>{user.firstName}</span>,
-                                 "lastName" -> <span>{user.lastName}</span>
-                            )
-                        })
-                    bind("list", xhtml, "entry" -> entries)
-                }
-        }
+    def list(xhtml : NodeSeq) = 
+    User.findAll match {
+        case List() => <span>No users</span>
+        case useri : List[User] => {
+                val entries : NodeSeq = useri.flatMap({user =>
+                        bind("user", chooseTemplate("list", "entry", xhtml),
+                             "firstName" -> <span>{user.firstName}</span>,
+                             "lastName" -> <span>{user.lastName}</span>
+                        )
+                    })
+                bind("list", xhtml, "entry" -> entries)
+            }
     }
+
 
 }
