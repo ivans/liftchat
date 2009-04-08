@@ -24,8 +24,10 @@ class UserList {
 
     def list(xhtml : NodeSeq) = 
     User.findAll match {
-        case List() => <span>No users</span>
+        case List() => <span>{S.?("msgNoUsers")}</span>
         case useri : List[User] => {
+                Log.info("USerList.list");
+                S.notice("Prikazujem listu usera")
                 val entries : NodeSeq = useri.flatMap({user =>
                         bind("user", chooseTemplate("list", "entry", xhtml),
                              "firstName" -> <span>{user.firstName}</span>,

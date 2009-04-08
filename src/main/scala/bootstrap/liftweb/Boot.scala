@@ -45,6 +45,8 @@ class Boot {
 
         LiftRules.early.append(makeUtf8)
 
+        LiftRules.resourceNames = "messages" :: Nil
+
         S.addAround(DB.buildLoanWrapper)
     }
 
