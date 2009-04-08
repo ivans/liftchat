@@ -1,6 +1,4 @@
 <lift:surround with="default" at="content">
-    <h2>Users list</h2>
-    Korisnika je trenutno u bazi: <lift:userList.userCount>Broj korisnika</lift:userList.userCount>
 
     <style>
         /* <![CDATA[ */
@@ -10,6 +8,12 @@
         /* ]]> */
     </style>
 
+    <h2>Users list</h2>
+
+    <lift:loc>msgBrojKorisnika</lift:loc>
+    <lift:userList.userCount>#</lift:userList.userCount>
+
+    <hr/>
     <lift:userList.list>
         <div id="userList">
             <h3>Ovo je lista korisnika</h3>
