@@ -28,7 +28,9 @@ class Boot {
         Menu(Loc("Home", List("index"), "Home")) ::
         Menu(Loc("Users", List("users"), "Users")) ::
         Menu(Loc("Chat", List("chat"), "Chat")) ::
+        Menu(Loc("Form test", List("formTest"), "Form test")) ::
         User.sitemap
+
         LiftRules.setSiteMap(SiteMap(entries:_*))
 
         /*

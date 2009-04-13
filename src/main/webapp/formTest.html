@@ -1,0 +1,21 @@
+<lift:surround with="default" at="content">
+
+    <h2>Form test</h2>
+
+    <lift:formTest.addUser form="POST">
+        <entry:firstName/><br/>
+        <entry:lastName/><br/>
+        <entry:submit/>
+    </lift:formTest.addUser>
+
+    <hr/>
+
+    <lift:loc>msgBrojKorisnika</lift:loc>
+    <lift:userList.userCount>#</lift:userList.userCount>
+    
+    <hr/>
+
+    <lift:Msgs/>
+
+</lift:surround>
+

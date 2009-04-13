@@ -15,6 +15,7 @@ import net.liftweb.http.S._
 import net.liftweb.http.SHtml._
 import net.liftweb.util.Helpers._
 import net.liftweb.util._
+import net.liftweb.http.js.jquery.JqJsCmds._
 
 import hr.ivan.test.model.User
 
@@ -31,7 +32,12 @@ class UserList {
                 val entries : NodeSeq = useri.flatMap({user =>
                         bind("user", chooseTemplate("list", "entry", xhtml),
                              "firstName" -> <span>{user.firstName}</span>,
-                             "lastName" -> <span>{user.lastName}</span>
+                             "lastName" -> <span>{user.lastName}</span>,
+                             "delete" -> SHtml.submit("Obriši", () => {user.delete_!}),
+                             "delete2" -> SHtml.ajaxButton("Obriši", () => { 
+                                    user.delete_!
+                                    DisplayMessage("message1", <lift:embed what="porukaObrisanKorisnik"/>, 10000, 2000)
+                                })
                         )
                     })
                 bind("list", xhtml, "entry" -> entries)

@@ -14,7 +14,7 @@
     <lift:userList.userCount>#</lift:userList.userCount>
 
     <hr/>
-    <lift:userList.list>
+    <lift:userList.list form="POST">
         <div id="userList">
             <h3>Ovo je lista korisnika</h3>
             <table>
@@ -22,12 +22,16 @@
                     <tr>
                         <td><user:firstName>Ime</user:firstName></td>
                         <td><user:lastName>Prezime</user:lastName></td>
+                        <td><user:delete>Obriši</user:delete></td>
+                        <td><user:delete2>Obriši</user:delete2></td>
                     </tr>
                 </list:entry>
             </table>
         </div>
     </lift:userList.list>
 
+    <hr/>
+    <div id="message1"/>
     <hr/>
 
     <div>
