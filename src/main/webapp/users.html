@@ -15,19 +15,7 @@
 
     <hr/>
     <div id="userList">
-        <lift:userList.list form="POST">
-            <h3>Ovo je lista korisnika</h3>
-            <table>
-                <list:entry>
-                    <tr>
-                        <td><user:firstName>Ime</user:firstName></td>
-                        <td><user:lastName>Prezime</user:lastName></td>
-                        <td><user:delete>Obriši</user:delete></td>
-                        <td><user:delete2>Obriši</user:delete2></td>
-                    </tr>
-                </list:entry>
-            </table>
-        </lift:userList.list>
+        <lift:embed what="listaKorisnika"/>
     </div>
 
     <hr/>
