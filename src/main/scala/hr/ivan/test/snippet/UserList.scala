@@ -16,6 +16,7 @@ import net.liftweb.http.SHtml._
 import net.liftweb.util.Helpers._
 import net.liftweb.util._
 import net.liftweb.http.js.jquery.JqJsCmds._
+import net.liftweb.http.js.JsCmds.SetHtml
 
 import hr.ivan.test.model.User
 
@@ -34,12 +35,16 @@ class UserList {
                              "firstName" -> <span>{user.firstName}</span>,
                              "lastName" -> <span>{user.lastName}</span>,
                              "delete" -> SHtml.submit("Obriši", () => {user.delete_!}),
-                             "delete2" -> SHtml.ajaxButton("Obriši", () => { 
+                             "delete2" -> SHtml.ajaxButton("Obriši", () => {
+                                    Log.info("About to delete user")
                                     user.delete_!
-                                    DisplayMessage("message1", <lift:embed what="porukaObrisanKorisnik"/>, 10000, 2000)
+                                    Log.info("About to return")
+                                    DisplayMessage("message1", <lift:embed what="porukaObrisanKorisnik"/>, 10 seconds, 2 seconds) &
+                                    SetHtml("userList", <lift:userList.list></lift:userList.list>)
                                 })
                         )
                     })
+                Log.info("entries:: " + entries)
                 bind("list", xhtml, "entry" -> entries)
             }
     }
