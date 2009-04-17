@@ -27,11 +27,8 @@ class UserList {
                         bind("user", chooseTemplate("list", "entry", xhtml),
                              "firstName" -> <span>{user.firstName}</span>,
                              "lastName" -> <span>{user.lastName}</span>,
-                             "delete" -> SHtml.submit("Obrisi", () => {user.delete_!}),
                              "delete2" -> SHtml.ajaxButton("Obrisi", () => {
-                                    Log.info("About to delete user")
                                     user.delete_!
-                                    Log.info("About to return")
                                     DisplayMessage("message1", <lift:embed what="porukaObrisanKorisnik"/>, 10 seconds, 2 seconds) &
                                     SetHtml("userList", <lift:embed what="listaKorisnika"/>)
                                 })
