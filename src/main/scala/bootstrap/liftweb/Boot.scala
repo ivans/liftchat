@@ -21,7 +21,7 @@ class Boot {
 
         // where to search snippet
         LiftRules.addToPackages("hr.ivan.test")
-        Schemifier.schemify(true, Log.infoF _, User)
+        Schemifier.schemify(true, Log.infoF _, User, Ured)
 
         // Build SiteMap
         val entries =
@@ -29,6 +29,7 @@ class Boot {
         Menu(Loc("Users", List("users"), "Users")) ::
         Menu(Loc("Chat", List("chat"), "Chat")) ::
         Menu(Loc("Form test", List("formTest"), "Form test")) ::
+        Menu(Loc("DB Tests", List("dbtests"), "DB Tests")) ::
         User.sitemap
 
         LiftRules.setSiteMap(SiteMap(entries:_*))

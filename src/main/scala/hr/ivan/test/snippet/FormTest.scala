@@ -45,4 +45,32 @@ class FormTest {
         )
     }
 
+    def addUser2(xhtml : Group) : NodeSeq = {
+        object firstName extends RequestVar[String]("")
+        object lastName extends RequestVar[String]("")
+
+        def processEntryAdd() {
+            Log.info("processEntryAdd: " + firstName + ", " + lastName)
+            var user = new User
+            user.firstName(firstName)
+            user.lastName(lastName)
+            user.save
+            firstName("")
+            lastName("")
+            S.notice("User added to database.")
+        }
+
+        bind("entry", xhtml,
+             "firstName" -> SHtml.text(firstName, firstName(_)),
+             "lastName" -> SHtml.text("", lastName(_)),
+             "submit" -> (SHtml.hidden(processEntryAdd) ++ <input
+                    type="submit" value="Add User - hidden"/>),
+             "submit2" -> SHtml.ajaxButton("Add user - 2", () => {
+                    SetHtml("userList", <lift:embed what="listaKorisnika"/>) &
+                    DisplayMessage("message1", <span>Dodan korisnik</span>, 3 seconds, 2 seconds)
+                }
+            )
+        )
+    }
+
 }
