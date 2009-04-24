@@ -23,7 +23,13 @@ class AuthorOps {
                  "count" -> SHtml.link("/books/search.html", {() =>
                         BookOps.resultVar(Model.createNamedQuery[Book]("findBooksByAuthor", "id" ->author.id).getResultList.toList)
                     }, Text(author.books.size().toString)),
-                 "edit" -> SHtml.link("add.html", () => authorVar(author), Text(?("Edit")))))
+                 "edit" -> SHtml.link("add.html", () => authorVar(author), Text(?("Edit"))),
+                 "delete" -> SHtml.link("", () => {
+                        Log.info("deleting instance Author ", author.id, author.firstName, author.lastName)
+                        val a = Model.getReference(classOf[Author], author.id)
+                        Model.removeAndFlush(a)
+                    }, Text(?("Delete")))
+            ))
     }
 
     // Set up a requestVar to track the author object for edits and adds
