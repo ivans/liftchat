@@ -27,7 +27,10 @@ class Author {
     var id : Long = _
 
     @Column{val unique = true, val nullable = false}
-    var name : String = ""
+    var firstName : String = ""
+
+    @Column{val unique = true, val nullable = false}
+    var lastName : String = ""
 
     @OneToMany(){val mappedBy = "author", val targetEntity = classOf[Book]}
     var books : java.util.Set[Book] = new java.util.HashSet[Book]()

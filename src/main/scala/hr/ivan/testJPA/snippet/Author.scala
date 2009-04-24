@@ -1,18 +1,3 @@
-/*
- * Copyright 2008 WorldWide Conferencing, LLC
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *    http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions
- * and limitations under the License.
- */
 package hr.ivan.testJPA.snippet
 
 import scala.xml.{NodeSeq,Text}
@@ -30,13 +15,13 @@ import Model._
 
 class AuthorOps {
     def list (xhtml : NodeSeq) : NodeSeq = {
-        val authors = Model.createNamedQuery[Author]("findAllAuthors").getResultList()
+        val authors = Model.createNamedQuery[Author]("findAllAuthors") getResultList
 
         authors.flatMap(author =>
             bind("author", xhtml,
-                 "name" -> Text(author.name),
+                 "name" -> Text(author.firstName + " " + author.lastName),
                  "count" -> SHtml.link("/books/search.html", {() =>
-                        BookOps.resultVar(Model.createNamedQuery[Book]("findBooksByAuthor", "id" ->author.id).getResultList().toList)
+                        BookOps.resultVar(Model.createNamedQuery[Book]("findBooksByAuthor", "id" ->author.id).getResultList.toList)
                     }, Text(author.books.size().toString)),
                  "edit" -> SHtml.link("add.html", () => authorVar(author), Text(?("Edit")))))
     }
@@ -47,7 +32,7 @@ class AuthorOps {
 
     def add (xhtml : NodeSeq) : NodeSeq = {
         def doAdd () = {
-            if (author.name.length == 0) {
+            if (author.lastName.length == 0) {
                 error("emptyAuthor", "The author's name cannot be blank")
             } else {
                 try {
@@ -65,7 +50,8 @@ class AuthorOps {
 
         bind("author", xhtml,
              "id" -> SHtml.hidden(() => author.id = currentId),
-             "name" -> SHtml.text(author.name, author.name = _),
+             "firstName" -> SHtml.text(author.firstName, author.firstName = _),
+             "lastName" -> SHtml.text(author.lastName, author.lastName = _),
              "submit" -> SHtml.submit(?("Save"), doAdd))
     }
 }
