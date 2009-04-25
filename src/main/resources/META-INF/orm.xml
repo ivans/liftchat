@@ -32,4 +32,11 @@
         </named-query>
     </entity>
 
+    <entity class="User">
+        <named-query name="findAllUsers">
+            <query><![CDATA[from User u]]>
+            </query>
+        </named-query>
+    </entity>
+
 </entity-mappings>

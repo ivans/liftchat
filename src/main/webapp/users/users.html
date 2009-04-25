@@ -1,0 +1,40 @@
+<lift:surround with="default" at="content">
+    <head><title><lift:loc>Users</lift:loc></title></head>
+
+    <table>
+        <tr>
+            <th><lift:loc>First Name</lift:loc></th>
+            <th><lift:loc>Last Name</lift:loc></th>
+            <th></th>
+            <th></th>
+        </tr>
+        <lift:Users.list>
+            <tr>
+                <td><user:firstName /></td>
+                <td><user:lastName /></td>
+            </tr>
+        </lift:Users.list>
+    </table>
+
+    <hr/>
+
+    <lift:Users.add form="post">
+        <user:id />
+        <table>
+            <tr>
+                <td><lift:loc>First Name</lift:loc></td>
+                <td><user:firstName />
+                </td>
+            </tr>
+            <tr>
+                <td><lift:loc>Last Name</lift:loc></td>
+                <td><user:lastName /><lift:Msg id="lastName" /></td>
+            </tr>
+            <tr>
+                <td></td>
+                <td><user:submit /></td>
+            </tr>
+        </table>
+    </lift:Users.add>
+
+</lift:surround>

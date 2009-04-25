@@ -1,9 +1,10 @@
 package hr.ivan.testJPA.model
 
-import javax.persistence.{Entity, Id, Column, OneToMany, Transient, GeneratedValue, GenerationType}
+import javax.persistence.{Entity, Id, Column, OneToMany, Transient, GeneratedValue, GenerationType, Table}
 import org.hibernate.annotations.{Cascade, CascadeType}
 
 @Entity
+@Table {val name="TST_USERS"}
 class User {
 
     @Id

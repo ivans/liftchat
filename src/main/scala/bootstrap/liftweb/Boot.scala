@@ -41,7 +41,6 @@ class Boot {
         LiftRules.addToPackages("hr.ivan.testJPA")
         Schemifier.schemify(true, Log.infoF _, User, Ured)
 
-
         val entries =
         Menu(Loc("Home", List("index"), "Home")) ::
         Menu(Loc("Users", List("users"), "Users")) ::
@@ -53,6 +52,7 @@ class Boot {
         Menu(Loc("Books", List("books","list"), ?("Book List"))) ::
         Menu(Loc("Add Book", List("books" , "add"), ?("Add Book"), Hidden)) ::
         Menu(Loc("BookSearch", List("books" , "search" ), ?("Book Search"))) ::
+        Menu(Loc("Users JPA", List("users" , "users" ), ?("Users JPA"))) ::
         User.sitemap
 
         LiftRules.setSiteMap(SiteMap(entries:_*))

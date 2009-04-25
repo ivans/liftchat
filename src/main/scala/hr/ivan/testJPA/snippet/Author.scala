@@ -17,14 +17,6 @@ import Model._
 class AuthorOps extends PageUtil {
     def list (xhtml : NodeSeq) : NodeSeq = {
         val authors = Model.createNamedQuery[Author]("findAllAuthors") getResultList
-
-        def logAndError(e : String) = { error(e); Log.error(e) }
-
-        def getAllCauses(e : Throwable) : String = if (e == null) {
-            " END"
-        } else {
-            e.getMessage + " :: " + getAllCauses(e.getCause)
-        }
   
         authors.flatMap(author =>
             bind("author", xhtml,
