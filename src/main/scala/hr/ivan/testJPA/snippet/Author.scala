@@ -11,12 +11,21 @@ import Helpers._
 import javax.persistence.{EntityExistsException,PersistenceException}
 
 import hr.ivan.testJPA.model._
+import hr.ivan.util.{PageUtil}
 import Model._
 
-class AuthorOps {
+class AuthorOps extends PageUtil {
     def list (xhtml : NodeSeq) : NodeSeq = {
         val authors = Model.createNamedQuery[Author]("findAllAuthors") getResultList
 
+        def logAndError(e : String) = { error(e); Log.error(e) }
+
+        def getAllCauses(e : Throwable) : String = if (e == null) {
+            " END"
+        } else {
+            e.getMessage + " :: " + getAllCauses(e.getCause)
+        }
+  
         authors.flatMap(author =>
             bind("author", xhtml,
                  "name" -> Text(author.firstName + " " + author.lastName),
@@ -26,8 +35,19 @@ class AuthorOps {
                  "edit" -> SHtml.link("add.html", () => authorVar(author), Text(?("Edit"))),
                  "delete" -> SHtml.link("", () => {
                         Log.info("deleting instance Author ", author.id, author.firstName, author.lastName)
-                        Model.removeAndFlush(Model.getReference(classOf[Author], author.id))
-                    }, Text(?("Delete")))
+                        try {
+                            Model.removeAndFlush(Model.getReference(classOf[Author], author.id))
+                        } catch {
+                            case ee : EntityExistsException =>
+                                logAndError("Entity exists! Maybe object has children?")
+                            case pe : PersistenceException =>
+                                logAndError("Persistence exception")
+                            case _ =>
+                                logAndError("Some strange exception happened")
+                        } finally {
+                            redirectTo("/authors/list.html")
+                        }
+                    }, Text(?("Delete!")))
             ))
     }
 
