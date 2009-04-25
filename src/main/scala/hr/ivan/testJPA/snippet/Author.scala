@@ -26,8 +26,7 @@ class AuthorOps {
                  "edit" -> SHtml.link("add.html", () => authorVar(author), Text(?("Edit"))),
                  "delete" -> SHtml.link("", () => {
                         Log.info("deleting instance Author ", author.id, author.firstName, author.lastName)
-                        val a = Model.getReference(classOf[Author], author.id)
-                        Model.removeAndFlush(a)
+                        Model.removeAndFlush(Model.getReference(classOf[Author], author.id))
                     }, Text(?("Delete")))
             ))
     }
