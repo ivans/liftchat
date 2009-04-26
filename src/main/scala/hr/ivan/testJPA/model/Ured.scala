@@ -4,19 +4,18 @@ import javax.persistence.{Entity, Id, Column, OneToMany, ManyToOne, Transient, G
 import org.hibernate.annotations.{Cascade, CascadeType}
 
 @Entity
-@Table {val name="TST_USERS"}
-class User {
+@Table {val name = "TST_UREDI"}
+class Ured {
 
     @Id
     @GeneratedValue(){val strategy = GenerationType.AUTO}
     var id : Long = _
 
-    @Column{val nullable = true}
-    var firstName : String = ""
-
     @Column{val nullable = false}
-    var lastName : String = ""
+    var naziv : String = ""
 
-    @ManyToOne{val optional = false}
-    var ured : Ured = _
+    @ManyToOne{val optional = true}
+    var uredNadredjeni : Ured = _
+
+    override def toString = "Ured[" + id + ", " + naziv + ", " + uredNadredjeni + "]"
 }

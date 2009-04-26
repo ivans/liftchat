@@ -39,4 +39,11 @@
         </named-query>
     </entity>
 
+    <entity class="Ured">
+        <named-query name="findAllUredi">
+            <query><![CDATA[from Ured u]]>
+            </query>
+        </named-query>
+    </entity>
+
 </entity-mappings>

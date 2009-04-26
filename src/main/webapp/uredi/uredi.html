@@ -1,0 +1,42 @@
+<lift:surround with="default" at="content">
+    <head><title><lift:loc>Uredi</lift:loc></title></head>
+
+    <table>
+        <tr>
+            <th><lift:loc>Naziv</lift:loc></th>
+            <th><lift:loc>Nadređeni ured</lift:loc></th>
+            <th></th>
+        </tr>
+        <lift:Uredi.list>
+            <tr>
+                <td><ured:naziv /></td>
+                <td><ured:uredNadredjeni /></td>
+                <td><ured:edit /></td>
+            </tr>
+        </lift:Uredi.list>
+    </table>
+
+    <hr/>
+
+    <lift:Uredi.add form="post">
+        Id:hidden <ured:id />
+        Id:show <ured:id2 />
+        <table>
+            <tr>
+                <td><lift:loc>Naziv</lift:loc></td>
+                <td><ured:naziv />
+                </td>
+            </tr>
+            <tr>
+                <td><lift:loc>Nadređeni ured</lift:loc></td>
+                <td><ured:uredNadredjeni />
+                </td>
+            </tr>
+            <tr>
+                <td></td>
+                <td><ured:submit /></td>
+            </tr>
+        </table>
+    </lift:Uredi.add>
+
+</lift:surround>

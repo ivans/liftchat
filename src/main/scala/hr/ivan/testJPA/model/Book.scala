@@ -26,6 +26,7 @@ import org.hibernate.annotations.Type
  */
 @Entity
 class Book {
+    
     @Id
     @GeneratedValue(){val strategy = GenerationType.AUTO}
     var id : Long = _
