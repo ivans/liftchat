@@ -4,7 +4,7 @@
     <table>
         <tr>
             <th><lift:loc>Naziv</lift:loc></th>
-            <th><lift:loc>Nadređeni ured</lift:loc></th>
+            <th><lift:loc>Nadredjeni ured</lift:loc></th>
             <th></th>
         </tr>
         <lift:Uredi.list>
@@ -18,25 +18,30 @@
 
     <hr/>
 
+    <lift:Uredi.noviUred />
+
     <lift:Uredi.add form="post">
-        Id:hidden <ured:id />
-        Id:show <ured:id2 />
-        <table>
-            <tr>
-                <td><lift:loc>Naziv</lift:loc></td>
-                <td><ured:naziv />
-                </td>
-            </tr>
-            <tr>
-                <td><lift:loc>Nadređeni ured</lift:loc></td>
-                <td><ured:uredNadredjeni />
-                </td>
-            </tr>
-            <tr>
-                <td></td>
-                <td><ured:submit /></td>
-            </tr>
-        </table>
+        <div style="background-color: #abcdef">
+            <ured:id />
+            <ured:id2 />
+            <h3><ured:mode /></h3>
+            <table>
+                <tr>
+                    <td><lift:loc>Naziv</lift:loc><lift:Msg id="naziv" /></td>
+                    <td><ured:naziv />
+                    </td>
+                </tr>
+                <tr>
+                    <td><lift:loc>Nadredjeni ured</lift:loc></td>
+                    <td><ured:uredNadredjeni />
+                    </td>
+                </tr>
+                <tr>
+                    <td></td>
+                    <td><ured:submit /></td>
+                </tr>
+            </table>
+        </div>
     </lift:Uredi.add>
 
 </lift:surround>

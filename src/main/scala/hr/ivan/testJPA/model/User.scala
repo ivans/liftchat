@@ -7,7 +7,7 @@ import hr.ivan.util.EntityUtil._
 
 @Entity
 @Table {val name="TST_USERS"}
-class User extends PrimaryKeyId {
+class User extends Object with PrimaryKeyId {
 
     @Column{val nullable = true}
     var firstName : String = ""
@@ -15,6 +15,6 @@ class User extends PrimaryKeyId {
     @Column{val nullable = false}
     var lastName : String = ""
 
-    @ManyToOne{val optional = false}
+    @ManyToOne{val optional = true}
     var ured : Ured = _
 }

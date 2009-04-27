@@ -11,6 +11,7 @@ import Helpers._
 import javax.persistence.{EntityExistsException,PersistenceException}
 
 import hr.ivan.testJPA.model._
+import hr.ivan.testJPA.dao._
 import hr.ivan.util.{PageUtil}
 import Model._
 
@@ -22,6 +23,8 @@ class Users extends PageUtil {
             bind("user", xhtml,
                  "firstName" -> Text(user.firstName),
                  "lastName" -> Text(user.lastName),
+                 "ured" -> (if(user.ured != null) Text(user.ured.naziv) else Text("")),
+                 "edit" -> SHtml.link("/useri/useri", () => userVar(user), Text(?("Edit")))
             ))
     }
 
@@ -45,10 +48,17 @@ class Users extends PageUtil {
 
         val currentId = user.id
 
+        val choices = UredDAO.allUredi.map(ured => (ured.id.toString -> ured.naziv))
+        val default = if (user.ured != null) { Full(user.ured.id.toString) } else { Empty }
+
         bind("user", xhtml,
              "id" -> SHtml.hidden(() => user.id = currentId),
              "firstName" -> SHtml.text(user.firstName, user.firstName = _),
              "lastName" -> SHtml.text(user.lastName, user.lastName = _),
+             "ured" -> SHtml.select(choices, default,
+                                    uredId => {
+                    user.ured = Model.getReference(classOf[Ured], new java.lang.Long(uredId)) 
+                }),
              "submit" -> SHtml.submit(?("Save"), doAdd))
     }
 

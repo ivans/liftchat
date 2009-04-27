@@ -11,15 +11,15 @@ import Helpers._
 import javax.persistence.{EntityExistsException,PersistenceException}
 
 import hr.ivan.testJPA.model._
-import hr.ivan.util.{PageUtil}
+import hr.ivan.testJPA.dao._
+import hr.ivan.util.{PageUtil, EntityUtil}
+import EntityUtil._
 import Model._
 
 class Uredi extends PageUtil {
 
-    def allUredi = Model.createNamedQuery[Ured]("findAllUredi") getResultList()
-
     def list (xhtml : NodeSeq) : NodeSeq = {
-        val uredi = allUredi
+        val uredi = UredDAO.allUredi
         uredi.flatMap(ured =>
             bind("ured", xhtml,
                  "naziv" -> Text(ured.naziv),
@@ -31,10 +31,12 @@ class Uredi extends PageUtil {
     object uredVar extends RequestVar(new Ured())
     def ured = uredVar.is
 
+    def noviUred = SHtml.link("/uredi/uredi", () => uredVar(new Ured), Text(?("New ured")))
+
     def add (xhtml : NodeSeq) : NodeSeq = {
         def doAdd () = {
             if (ured.naziv.length == 0) {
-                error("naziv", "Naziv ureda ne može biti prazan!")
+                error("naziv", "Naziv ureda ne moze biti prazan!")
             } else {
                 try {
                     //Model.persistAndFlush(ured)
@@ -48,21 +50,19 @@ class Uredi extends PageUtil {
         }
 
         val current = ured
-        val choices = allUredi.map(ured => (ured.id.toString -> ured.naziv))
+        val choices = createSelectChoices(Some(?("Odaberite ured...")), UredDAO.allUredi, (ured : Ured) => (ured.id.toString -> ured.naziv))
         val default = if (ured.uredNadredjeni != null) { Full(ured.uredNadredjeni.id.toString) } else { Empty }
+
+        def doUredSelect(uredId : String) = {
+            ured.uredNadredjeni = getFromEM(classOf[Ured], uredId, Model).getOrElse(null)
+        }
 
         bind("ured", xhtml,
              "id" -> SHtml.hidden(() => uredVar(current)),
              "naziv" -> SHtml.text(ured.naziv, ured.naziv = _),
              "id2" -> Text(ured.id.toString),
-             "uredNadredjeni" -> SHtml.select(choices,
-                                              {Log.info("urednadredjeni default = " + default); default},
-                                              uredId => {
-                    Log.info("Selecting ured : id = " + uredId)
-                    ured.uredNadredjeni = Model.getReference(classOf[Ured], new java.lang.Long(uredId))
-                    Log.info("Odabrani ured = " + ured.uredNadredjeni)
-                }
-            ),
+             "uredNadredjeni" -> SHtml.select(choices, default, doUredSelect),
+             "mode" -> Text(if(ured.id == 0) "Add ured" else "Edit ured"),
              "submit" -> SHtml.submit(?("Save"), doAdd))
     }
 

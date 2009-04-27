@@ -7,7 +7,7 @@ import hr.ivan.util.EntityUtil._
 
 @Entity
 @Table {val name = "TST_UREDI"}
-class Ured extends PrimaryKeyId {
+class Ured extends Object with PrimaryKeyId {
 
     @Column{val nullable = false}
     var naziv : String = ""
