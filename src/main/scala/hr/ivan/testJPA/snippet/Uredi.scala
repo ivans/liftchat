@@ -37,8 +37,8 @@ class Uredi extends PageUtil {
                 error("naziv", "Naziv ureda ne može biti prazan!")
             } else {
                 try {
-                    Model.persistAndFlush(ured)
-                    //Model.mergeAndFlush(ured)
+                    //Model.persistAndFlush(ured)
+                    Model.mergeAndFlush(ured)
                     redirectTo("/uredi/uredi")
                 } catch {
                     case ee : EntityExistsException => error("Author already exists")
@@ -59,7 +59,7 @@ class Uredi extends PageUtil {
                                               {Log.info("urednadredjeni default = " + default); default},
                                               uredId => {
                     Log.info("Selecting ured : id = " + uredId)
-                    ured.uredNadredjeni = Model.getReference(classOf[Ured], uredId)
+                    ured.uredNadredjeni = Model.getReference(classOf[Ured], new java.lang.Long(uredId))
                     Log.info("Odabrani ured = " + ured.uredNadredjeni)
                 }
             ),

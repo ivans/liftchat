@@ -37,8 +37,8 @@ class Users extends PageUtil {
                     Model.mergeAndFlush(user)
                     redirectTo("/users/users")
                 } catch {
-                    case ee : EntityExistsException => error("Author already exists")
-                    case pe : PersistenceException => logAndError("Error adding user")
+                    case ee : EntityExistsException => error("Author already exists " + ee.getMessage)
+                    case pe : PersistenceException => logAndError("Error adding user " + pe.getMessage)
                 }
             }
         }
