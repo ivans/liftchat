@@ -1,0 +1,17 @@
+
+<ehcache>
+    <diskStore path="java.io.tmpdir" />
+    <defaultCache maxElementsInMemory="10000" eternal="false"
+		timeToIdleSeconds="120" timeToLiveSeconds="120" overflowToDisk="true"
+		maxElementsOnDisk="10000000" diskPersistent="false"
+		diskExpiryThreadIntervalSeconds="120" memoryStoreEvictionPolicy="LRU">
+        <cacheEventListenerFactory class="hr.ivan.util.cache.CacheEventListenerFactoryImpl"	properties="" />
+    </defaultCache>
+    <cache name="hr.ivan.testJPA.model.Ured" maxElementsInMemory="100" eternal="true">
+        <cacheEventListenerFactory class="hr.ivan.util.cache.CacheEventListenerFactoryImpl"	properties="" />
+    </cache>
+<!--    <cache name="query.sifarnici" maxElementsInMemory="1000" eternal="false"
+		timeToLiveSeconds="14400" overflowToDisk="true">
+    </cache>
+    -->
+</ehcache>

@@ -7,7 +7,7 @@ import hr.ivan.util.EntityUtil._
 
 @Entity
 @Table {val name="TST_USERS"}
-class User extends Object with PrimaryKeyId {
+class User extends PrimaryKeyId {
 
     @Column{val nullable = true}
     var firstName : String = ""

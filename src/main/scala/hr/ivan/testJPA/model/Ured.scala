@@ -1,13 +1,14 @@
 package hr.ivan.testJPA.model
 
 import javax.persistence.{Entity, Id, Column, OneToMany, ManyToOne, Transient, GeneratedValue, GenerationType, Table}
-import org.hibernate.annotations.{Cascade, CascadeType}
+import org.hibernate.annotations.{Cascade, CascadeType, Cache, CacheConcurrencyStrategy}
 
 import hr.ivan.util.EntityUtil._
 
 @Entity
 @Table {val name = "TST_UREDI"}
-class Ured extends Object with PrimaryKeyId {
+@Cache {val usage = CacheConcurrencyStrategy.READ_WRITE}
+class Ured extends PrimaryKeyId {
 
     @Column{val nullable = false}
     var naziv : String = ""

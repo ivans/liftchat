@@ -57,7 +57,9 @@ class Users extends PageUtil {
              "lastName" -> SHtml.text(user.lastName, user.lastName = _),
              "ured" -> SHtml.select(choices, default,
                                     uredId => {
-                    user.ured = Model.getReference(classOf[Ured], new java.lang.Long(uredId)) 
+
+                
+                user.ured = Model.find(classOf[Ured], new java.lang.Long(uredId)).getOrElse(null)
                 }),
              "submit" -> SHtml.submit(?("Save"), doAdd))
     }

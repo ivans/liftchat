@@ -7,7 +7,6 @@ import _root_.net.liftweb.sitemap.Loc._
 import Helpers._
 import _root_.net.liftweb.mapper.{DB, ConnectionManager, Schemifier, DefaultConnectionIdentifier, ConnectionIdentifier}
 import _root_.java.sql.{Connection, DriverManager}
-import _root_.hr.ivan.test.model._
 import _root_.javax.servlet.http.{HttpServletRequest}
 
 import S.?
@@ -37,16 +36,11 @@ class Boot {
         DB.defineConnectionManager(DefaultConnectionIdentifier, DBVendor)
 
         // where to search snippet
-        LiftRules.addToPackages("hr.ivan.test")
         LiftRules.addToPackages("hr.ivan.testJPA")
-        Schemifier.schemify(true, Log.infoF _, User, Ured)
 
         val entries =
         Menu(Loc("Home", List("index"), "Home")) ::
-        Menu(Loc("Users", List("users"), "Users")) ::
         Menu(Loc("Chat", List("chat"), "Chat")) ::
-        Menu(Loc("Form test", List("formTest"), "Form test")) ::
-        Menu(Loc("DB Tests", List("dbtests"), "DB Tests")) ::
         Menu(Loc("Authors", List("authors", "list"), ?("Author List"))) ::
         Menu(Loc("Add Author", List("authors","add"), ?("Add Author"), Hidden)) ::
         Menu(Loc("Books", List("books","list"), ?("Book List"))) ::
@@ -54,7 +48,7 @@ class Boot {
         Menu(Loc("BookSearch", List("books" , "search" ), ?("Book Search"))) ::
         Menu(Loc("Users JPA", List("users" , "users" ), ?("Users JPA"))) ::
         Menu(Loc("Uredi JPA", List("uredi" , "uredi" ), ?("Uredi JPA"))) ::
-        User.sitemap
+        Nil
 
         LiftRules.setSiteMap(SiteMap(entries:_*))
 
