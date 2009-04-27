@@ -3,13 +3,11 @@ package hr.ivan.testJPA.model
 import javax.persistence.{Entity, Id, Column, OneToMany, ManyToOne, Transient, GeneratedValue, GenerationType, Table}
 import org.hibernate.annotations.{Cascade, CascadeType}
 
+import hr.ivan.util.EntityUtil._
+
 @Entity
 @Table {val name = "TST_UREDI"}
-class Ured {
-
-    @Id
-    @GeneratedValue(){val strategy = GenerationType.AUTO}
-    var id : Long = _
+class Ured extends PrimaryKeyId {
 
     @Column{val nullable = false}
     var naziv : String = ""
