@@ -94,6 +94,13 @@
             <version>1.6.0-beta4</version>
             <scope>compile</scope>
         </dependency>
+        <dependency>
+            <groupId>oracle</groupId>
+            <artifactId>ojdbc</artifactId>
+            <version>10.2.0.4</version>
+            <scope>compile</scope>
+        </dependency>
+        
     </dependencies>
 
     <build>

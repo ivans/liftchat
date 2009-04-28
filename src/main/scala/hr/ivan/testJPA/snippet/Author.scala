@@ -12,9 +12,10 @@ import javax.persistence.{EntityExistsException,PersistenceException}
 
 import hr.ivan.testJPA.model._
 import hr.ivan.util.{PageUtil}
+import PageUtil._
 import Model._
 
-class AuthorOps extends PageUtil {
+class AuthorOps {
     def list (xhtml : NodeSeq) : NodeSeq = {
         val authors = Model.createNamedQuery[Author]("findAllAuthors") getResultList
   

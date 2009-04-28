@@ -14,9 +14,10 @@ import hr.ivan.testJPA.model._
 import hr.ivan.testJPA.dao._
 import hr.ivan.util.{PageUtil, EntityUtil}
 import EntityUtil._
+import PageUtil._
 import Model._
 
-class Uredi extends PageUtil {
+class Uredi {
 
     def list (xhtml : NodeSeq) : NodeSeq = {
         val uredi = UredDAO.allUredi
@@ -24,6 +25,7 @@ class Uredi extends PageUtil {
             bind("ured", xhtml,
                  "naziv" -> Text(ured.naziv),
                  "uredNadredjeni" -> Text(if (ured.uredNadredjeni != null) ured.uredNadredjeni.naziv else ""),
+                 "brojUsera" -> Text(ured.useri.size.toString),
                  "edit" -> SHtml.link("/uredi/uredi", () => uredVar(ured), Text(?("Edit")))
             ))
     }

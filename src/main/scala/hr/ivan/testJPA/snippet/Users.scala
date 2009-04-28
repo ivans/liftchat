@@ -12,10 +12,12 @@ import javax.persistence.{EntityExistsException,PersistenceException}
 
 import hr.ivan.testJPA.model._
 import hr.ivan.testJPA.dao._
-import hr.ivan.util.{PageUtil}
+import hr.ivan.util.{PageUtil, EntityUtil}
+import EntityUtil._
+import PageUtil._
 import Model._
 
-class Users extends PageUtil {
+class Users {
 
     def list (xhtml : NodeSeq) : NodeSeq = {
         val users = Model.createNamedQuery[User]("findAllUsers") getResultList()
@@ -56,9 +58,7 @@ class Users extends PageUtil {
              "lastName" -> SHtml.text(user.lastName, user.lastName = _),
              "ured" -> SHtml.select(choices, default,
                                     uredId => {
-
-                
-                    user.ured = Model.find(classOf[Ured], new java.lang.Long(uredId)).getOrElse(null)
+                    user.ured = getFromEM(classOf[Ured], uredId, Model).getOrElse(null)
                 }),
              "submit" -> SHtml.submit(?("Save"), doAdd))
     }

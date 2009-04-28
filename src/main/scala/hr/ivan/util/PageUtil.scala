@@ -2,7 +2,7 @@ package hr.ivan.util
 
 import net.liftweb.util.{Log}
 
-trait PageUtil {
+object PageUtil {
 
     def logAndError(e : String) = { error(e); Log.error(e) }
 

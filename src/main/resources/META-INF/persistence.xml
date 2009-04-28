@@ -2,9 +2,17 @@
 <persistence>
     <persistence-unit name="jpaweb" transaction-type="RESOURCE_LOCAL">
         <properties>
+<!--
             <property name="hibernate.dialect" value="org.hibernate.dialect.DerbyDialect"/>
             <property name="hibernate.connection.driver_class" value="org.apache.derby.jdbc.EmbeddedDriver"/>
             <property name="hibernate.connection.url" value="jdbc:derby:lift_example;create=true"/>
+            -->
+            <property name="hibernate.dialect" value="org.hibernate.dialect.OracleDialect"/>
+            <property name="hibernate.connection.driver_class" value="oracle.jdbc.OracleDriver"/>
+            <property name="hibernate.connection.url" value="jdbc:oracle:thin:@zg-edu-02:1521:ora10"/>
+            <property name="hibernate.connection.username" value="ivans"/>
+            <property name="hibernate.connection.password" value="i"/>
+
             <property name="hibernate.max_fetch_depth" value="3"/>
             <property name="hibernate.show_sql" value="true" />
             <property name="hibernate.hbm2ddl.auto" value="update" />
