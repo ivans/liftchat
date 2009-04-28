@@ -11,14 +11,6 @@ object EntityUtil {
         var id : Long = 0
     }
 
-    def createSelectChoices[T](emptyChoice : Option[String], lista : Seq[T], mapping : T => (String, String)) = {
-        def list = lista.map(mapping)
-        emptyChoice match {
-            case Some(str) => ("" -> str) :: list.toList
-            case None => list
-        }
-    }
-
     def getFromEM[T <: AnyRef with PrimaryKeyId](x : T, model : LocalEMF with RequestVarEM) : T = {
         if(x.id == 0) {
             x

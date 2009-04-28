@@ -12,4 +12,11 @@ trait PageUtil {
         e.getMessage + " :: " + getAllCauses(e.getCause)
     }
 
+    def createSelectChoices[T](emptyChoice : Option[String], lista : Seq[T], mapping : T => (String, String)) = {
+        def list = lista.map(mapping)
+        emptyChoice match {
+            case Some(str) => ("" -> str) :: list.toList
+            case None => list
+        }
+    }
 }

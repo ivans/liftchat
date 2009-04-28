@@ -47,8 +47,7 @@ class Users extends PageUtil {
         }
 
         val currentId = user.id
-
-        val choices = UredDAO.allUredi.map(ured => (ured.id.toString -> ured.naziv))
+        val choices = createSelectChoices(Some(?("Odaberite ured...")), UredDAO.allUredi, (ured : Ured) => (ured.id.toString -> ured.naziv))
         val default = if (user.ured != null) { Full(user.ured.id.toString) } else { Empty }
 
         bind("user", xhtml,
@@ -59,7 +58,7 @@ class Users extends PageUtil {
                                     uredId => {
 
                 
-                user.ured = Model.find(classOf[Ured], new java.lang.Long(uredId)).getOrElse(null)
+                    user.ured = Model.find(classOf[Ured], new java.lang.Long(uredId)).getOrElse(null)
                 }),
              "submit" -> SHtml.submit(?("Save"), doAdd))
     }
