@@ -24,7 +24,7 @@ class Users extends PageUtil {
                  "firstName" -> Text(user.firstName),
                  "lastName" -> Text(user.lastName),
                  "ured" -> (if(user.ured != null) Text(user.ured.naziv) else Text("")),
-                 "edit" -> SHtml.link("/useri/useri", () => userVar(user), Text(?("Edit")))
+                 "edit" -> SHtml.link("/users/users", () => userVar(user), Text(?("Edit")))
             ))
     }
 
