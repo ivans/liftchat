@@ -1,7 +1,9 @@
 package hr.ivan.util
 
-import javax.persistence.{Id, GeneratedValue, GenerationType, Column, Transient}
+import javax.persistence.{Id, GeneratedValue, GenerationType, Column, Transient, Embeddable, Temporal, TemporalType}
 import org.scala_libs.jpa.{LocalEMF, RequestVarEM}
+
+import java.util.Date
 
 object EntityUtil {
 
@@ -9,6 +11,27 @@ object EntityUtil {
         @Id
         @GeneratedValue(){val strategy = GenerationType.AUTO}
         var id : Long = 0
+    }
+
+    trait RecordInfo {
+        var recordInfo = new RecordInfoImpl
+    }
+
+    @Embeddable
+    class RecordInfoImpl {
+        @Column {val name = "USER_INSERT", val unique = false, val nullable = false, val insertable = true, val updatable = true, val length = 30}
+        var userInsert : String = null
+
+        @Temporal {val value = TemporalType.TIMESTAMP}
+        @Column {val name = "DATE_INSERT", val unique = false, val nullable = false, val insertable = true, val updatable = true}
+        var dateInsert : Date = null
+
+        @Column {val name = "USER_UPDATE", val unique = false, val nullable = false, val insertable = true, val updatable = true, val length = 30}
+        var userUpdate : String = null
+
+        @Temporal(TemporalType.TIMESTAMP)
+        @Column {val name = "DATE_UPDATE", val unique = false, val nullable = false, val insertable = true, val updatable = true}
+        var dateUpdate : Date = null
     }
 
     trait Aktivan {

@@ -8,7 +8,7 @@ import _root_.hr.ivan.util.EntityUtil._
 @Entity
 @Table {val name = "TST_UREDI"}
 @Cache {val usage = CacheConcurrencyStrategy.READ_WRITE}
-class Ured extends PrimaryKeyId with AktivanDefaultTrue {
+class Ured extends PrimaryKeyId with AktivanDefaultTrue with RecordInfo {
 
     @Column{val nullable = false}
     var naziv : String = ""
