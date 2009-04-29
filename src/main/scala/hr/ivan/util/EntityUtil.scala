@@ -1,6 +1,9 @@
 package hr.ivan.util
 
-import javax.persistence.{Id, GeneratedValue, GenerationType, Column, Transient, Embeddable, Temporal, TemporalType}
+import net.liftweb.util.Log
+
+import javax.persistence.{Id, GeneratedValue, GenerationType, Column, Transient}
+import javax.persistence.{Embeddable, Temporal, TemporalType, PreUpdate, PrePersist}
 import org.scala_libs.jpa.{LocalEMF, RequestVarEM}
 
 import java.util.Date
@@ -15,6 +18,26 @@ object EntityUtil {
 
     trait RecordInfo {
         var recordInfo = new RecordInfoImpl
+    }
+
+    class RecordInfoListener {
+        @PreUpdate
+        def preUpdate(entity : Object with RecordInfo) = {
+            Log.info(" ===> preUpdate")
+            entity.recordInfo.userUpdate = "TEST"
+            val now = new Date
+            entity.recordInfo.dateUpdate = now
+        }
+
+        @PrePersist
+        def prePersist(entity : Object with RecordInfo) = {
+            Log.info(" ===> prePersist")
+            entity.recordInfo.userInsert = "TEST"
+            entity.recordInfo.userUpdate = "TEST"
+            val now = new Date
+            entity.recordInfo.dateInsert = now
+            entity.recordInfo.dateUpdate = now
+        }
     }
 
     @Embeddable
@@ -38,7 +61,7 @@ object EntityUtil {
         @Column {val name="AKTIVAN"}
         var _aktivan : java.lang.Boolean = null
         @Transient
-        def aktivan = if(_aktivan == null) None else Some(_aktivan)
+        def aktivan = if(_aktivan == null) None else Some(_aktivan.booleanValue)
         @Transient
         def aktivan_=(b : Boolean) = _aktivan = b
         @Transient

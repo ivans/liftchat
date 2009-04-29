@@ -1,0 +1,21 @@
+<lift:surround with="default" at="content">
+    <head><title><lift:loc>Add / edit role</lift:loc></title></head>
+
+    <lift:Role.add form="post">
+        <div style="background-color : #abcdef">
+            <rola:id />
+            <table>
+                <tr>
+                    <td><lift:loc>Naziv</lift:loc></td>
+                    <td><rola:naziv /><lift:Msg id="naziv" />
+                    </td>
+                </tr>
+                <tr>
+                    <td></td>
+                    <td><rola:submit /></td>
+                </tr>
+            </table>
+        </div>
+    </lift:Role.add>
+
+</lift:surround>

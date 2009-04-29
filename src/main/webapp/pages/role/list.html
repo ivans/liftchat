@@ -1,0 +1,21 @@
+<lift:surround with="default" at="content">
+    <head><title><lift:loc>Users</lift:loc></title></head>
+
+    <table>
+        <tr>
+            <th><lift:loc>Naziv</lift:loc></th>
+            <th><lift:loc>Aktivan</lift:loc></th>
+            <th></th>
+            <th></th>
+        </tr>
+        <lift:Role.list>
+            <tr>
+                <td><rola:naziv /></td>
+                <td><rola:aktivan /></td>
+                <td><rola:edit /></td>
+                <td><rola:delete /><rola:delete2 /></td>
+            </tr>
+        </lift:Role.list>
+    </table>
+
+</lift:surround>

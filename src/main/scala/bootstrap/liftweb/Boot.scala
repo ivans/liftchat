@@ -48,6 +48,8 @@ class Boot {
         Menu(Loc("BookSearch", List("books" , "search" ), ?("Book Search"))) ::
         Menu(Loc("Users JPA", List("users" , "users" ), ?("Users JPA"))) ::
         Menu(Loc("Uredi JPA", List("uredi" , "uredi" ), ?("Uredi JPA"))) ::
+        Menu(Loc("Role JPA - list", List("pages", "role" , "list" ), ?("Role JPA - list"))) ::
+        Menu(Loc("Role JPA - add", List("pages", "role" , "addEdit" ), ?("Role JPA - add"))) ::
         Nil
 
         LiftRules.setSiteMap(SiteMap(entries:_*))
