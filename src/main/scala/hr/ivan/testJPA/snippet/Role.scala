@@ -43,21 +43,7 @@ class Role {
                  "naziv" -> Text(rola.naziv),
                  "aktivan" -> SHtml.checkbox(rola.aktivan.getOrElse(false), _ => Nil, ("disabled" -> "true")),
                  "edit" -> SHtml.link("/pages/role/addEdit", () => rolaVar(rola), Text(?("Edit"))),
-                 "delete2" -> deleteLink(classOf[Rola], rola.id, "/pages/role/list", Text(?("Delete2"))),
-                 "delete" -> SHtml.link("", () => {
-                        try {
-                            Model.removeAndFlush(Model.getReference(classOf[Rola], rola.id))
-                        } catch {
-                            case ee : EntityExistsException =>
-                                logAndError("Entity exists! Maybe object has children?")
-                            case pe : PersistenceException =>
-                                logAndError("Persistence exception")
-                            case _ =>
-                                logAndError("Some strange exception happened")
-                        } finally {
-                            redirectTo("/pages/role/list")
-                        }
-                    }, Text(?("Delete")))
+                 "delete" -> deleteLink(classOf[Rola], rola.id, "/pages/role/list", Text(?("Delete"))),
             ))
     }
 

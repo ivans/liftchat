@@ -6,6 +6,7 @@ import net.liftweb.util.Helpers._
 import net.liftweb.util._
 import scala.xml.{NodeSeq}
 import scala.collection.immutable.TreeMap
+import scala.collection.mutable._
 import net.liftweb.textile.TextileParser
 import scala.xml.Text
 import java.util.Date
@@ -13,11 +14,16 @@ import java.util.Date
 object ChatServer extends Actor {
     private var chats: List[ChatLine] = Nil
     private var listeners: List[Actor] = Nil
-  
+
+    val boje = List("#aaffff", "#ffaaff", "#ffffaa", "#aaaaff", "#ffaaaa", "#aaffaa")
+    var zadnjaBoja = 0
+
+    var mapa : Map[String, String] = new HashMap[String, String]
+
     def act = loop {
         react {
             case ChatServerMsg(user, msg) if msg.length > 0 =>
-                chats = ChatLine(user, toHtml(msg), timeNow) :: chats
+                chats = ChatLine(user, toHtml(msg), timeNow, mapa.get(user).getOrElse("")) :: chats
                 val toDistribute = chats.take(15)
                 listeners.foreach (_ ! ChatServerUpdate(toDistribute))
       
@@ -27,6 +33,10 @@ object ChatServer extends Actor {
             
             case ChatServerRemove(me) =>
                 listeners = listeners.remove(_ == me)
+
+            case ChatServerRegisterUsername(userName : String) =>
+                mapa.put(userName, boje(zadnjaBoja))
+                zadnjaBoja = (zadnjaBoja + 1) % boje.size
 
             case _ =>
         }
@@ -39,9 +49,10 @@ object ChatServer extends Actor {
     this.start
 }
 
-case class ChatLine(user: String, msg: NodeSeq, when: Date)
+case class ChatLine(user: String, msg: NodeSeq, when: Date, col : String)
 case class ChatServerMsg(user: String, msg: String)
 case class ChatServerUpdate(msgs: List[ChatLine])
 case class ChatServerAdd(me: Actor)
 case class ChatServerRemove(me: Actor)
+case class ChatServerRegisterUsername(userName : String)
 

@@ -17,6 +17,7 @@ import net.liftweb.http.js.jquery.JqJsCmds._
 class Chat extends CometActor {
     private var userName = ""
     private var currentData: List[ChatLine] = Nil
+    private var color = ""
     override def defaultPrefix = Some("chat")
 
     private lazy val infoId = uniqueId + "_info"
@@ -28,13 +29,13 @@ class Chat extends CometActor {
     }
 
     override def lowPriority = {
-        case ChatServerUpdate(value) =>
-            (value diff currentData) match {
-                case Nil =>
-                case diff => partialUpdate(diff.reverse.foldLeft(Noop)((a,b) => a & AppendHtml(infoId, line(b))))
+        case ChatServerUpdate(value) => {
+                (value diff currentData) match {
+                    case Nil =>
+                    case diff => partialUpdate(diff.reverse.foldLeft(Noop)((a,b) => a & AppendHtml(infoId, line(b))))
+                }
+                currentData = value
             }
-
-            currentData = value
     }
 
     override lazy val fixedRender: Box[NodeSeq] = {
@@ -43,7 +44,12 @@ class Chat extends CometActor {
                  (text("", sendMessage _) % ("id" -> n)) ++ <input type="submit" value="Chat"/> )
     }
 
-    def line(cl: ChatLine) = (<li>{hourFormat(cl.when)} {cl.user}: {cl.msg}</li>)
+    def style(c : String) = {
+        System.out.println("COL ==== " + c);
+        "background-color: " + c
+    }
+
+    def line(cl: ChatLine) = (<li style={style(cl.col)}>{hourFormat(cl.when)} {cl.user}: {cl.msg}</li>)
 
     override def render = (<span>Hello "{userName}"
             <ul id={infoId}>{currentData.reverse.flatMap(line)}</ul>
@@ -52,7 +58,10 @@ class Chat extends CometActor {
     override def localSetup {
         if (userName.length == 0) {
             ask(new AskName, "what's your username") {
-                case s: String if (s.trim.length > 2) => userName = s.trim; reRender(true)
+                case s: String if (s.trim.length > 2) =>
+                    userName = s.trim;
+                    server ! ChatServerRegisterUsername(userName)
+                    reRender(true)
                 case s => localSetup; reRender(false)
             }
         }
@@ -61,6 +70,5 @@ class Chat extends CometActor {
     // def waitForUpdate : Option[List[ChatLine]] = receiveWithin(100) {case ChatServerUpdate(l) => Some(l) case TIMEOUT => None}
 
     def sendMessage(msg: String) = server ! ChatServerMsg(userName, msg.trim)
-
 
 }

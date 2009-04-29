@@ -37,6 +37,7 @@ class Boot {
 
         // where to search snippet
         LiftRules.addToPackages("hr.ivan.testJPA")
+        LiftRules.addToPackages("hr.ivan.test")
 
         val entries =
         Menu(Loc("Home", List("index"), "Home")) ::
