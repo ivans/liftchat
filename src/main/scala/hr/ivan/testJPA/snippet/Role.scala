@@ -19,23 +19,6 @@ import Model._
 
 class Role {
 
-    def deleteLink[T <: AnyRef](clazz : Class[T], id : Long, redirectToDest : String, link : NodeSeq) = {
-        SHtml.link("", () => {
-                try {
-                    Model.removeAndFlush(Model.getReference(clazz, id))
-                } catch {
-                    case ee : EntityExistsException =>
-                        logAndError("Entity exists! Maybe object has children?")
-                    case pe : PersistenceException =>
-                        logAndError("Persistence exception")
-                    case _ =>
-                        logAndError("Some strange exception happened")
-                } finally {
-                    redirectTo(redirectToDest)
-                }
-            }, link)
-    }
-
     def list (xhtml : NodeSeq) : NodeSeq = {
         val role = RolaDAO.allRoleAktivne
         role.flatMap(rola =>
@@ -43,7 +26,7 @@ class Role {
                  "naziv" -> Text(rola.naziv),
                  "aktivan" -> SHtml.checkbox(rola.aktivan.getOrElse(false), _ => Nil, ("disabled" -> "true")),
                  "edit" -> SHtml.link("/pages/role/addEdit", () => rolaVar(rola), Text(?("Edit"))),
-                 "delete" -> deleteLink(classOf[Rola], rola.id, "/pages/role/list", Text(?("Delete"))),
+                 "delete" -> deleteLink(classOf[Rola], rola.id, "/pages/role/list", Text(?("Delete")), Model),
             ))
     }
 
@@ -64,8 +47,8 @@ class Role {
                         })
                     redirectTo("/pages/role/list")
                 } catch {
-                    case ee : EntityExistsException => error("Rola vec postoji " + ee.getMessage)
-                    case pe : PersistenceException => logAndError("Error adding Rola " + pe.getMessage)
+                    case ee : EntityExistsException => logAndError("Rola vec postoji ", ee)
+                    case pe : PersistenceException => logAndError("Error adding Rola ", pe)
                 }
             }
         }

@@ -49,6 +49,10 @@ class Chat extends CometActor {
         "background-color: " + c
     }
 
+    def insertEmoticons(str : String) = {
+        str.replace(":)", (<img src="/images/ajax-loader.gif"/>).toString)
+    }
+
     def line(cl: ChatLine) = (<li style={style(cl.col)}>{hourFormat(cl.when)} {cl.user}: {cl.msg}</li>)
 
     override def render = (<span>Hello "{userName}"

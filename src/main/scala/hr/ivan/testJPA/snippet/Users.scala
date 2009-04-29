@@ -26,7 +26,8 @@ class Users {
                  "firstName" -> Text(user.firstName),
                  "lastName" -> Text(user.lastName),
                  "ured" -> (if(user.ured != null) Text(user.ured.naziv) else Text("")),
-                 "edit" -> SHtml.link("/users/users", () => userVar(user), Text(?("Edit")))
+                 "edit" -> SHtml.link("/users/users", () => userVar(user), Text(?("Edit"))),
+                 "delete" -> deleteLink(classOf[User], user.id, "/users/users", Text(?("Delete")), Model),
             ))
     }
 
@@ -42,8 +43,8 @@ class Users {
                     Model.mergeAndFlush(user)
                     redirectTo("/users/users")
                 } catch {
-                    case ee : EntityExistsException => error("Author already exists " + ee.getMessage)
-                    case pe : PersistenceException => logAndError("Error adding user " + pe.getMessage)
+                    case ee : EntityExistsException => logAndError("Author already exists ", ee)
+                    case pe : PersistenceException => logAndError("Error adding user ", pe)
                 }
             }
         }

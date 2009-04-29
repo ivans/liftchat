@@ -32,11 +32,11 @@ class AuthorOps {
                             Model.removeAndFlush(Model.getReference(classOf[Author], author.id))
                         } catch {
                             case ee : EntityExistsException =>
-                                logAndError("Entity exists! Maybe object has children?")
+                                logAndError("Entity exists! Maybe object has children?", ee)
                             case pe : PersistenceException =>
-                                logAndError("Persistence exception")
+                                logAndError("Persistence exception", pe)
                             case _ =>
-                                logAndError("Some strange exception happened")
+                                logAndError("Some strange exception happened", null)
                         } finally {
                             redirectTo("/authors/list.html")
                         }
