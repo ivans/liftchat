@@ -64,6 +64,8 @@ class Users {
         val currentUser = user
         val choices = createSelectChoices(Some(?("Odaberite ured...")), UredDAO.allUredi, (ured : Ured) => (ured.id.toString -> ured.naziv))
         val default = if (user.ured != null) { Full(user.ured.id.toString) } else { Empty }
+        val choicesRole = createSelectChoices(Some(?("Odaberite rolu...")), RolaDAO.allRoleAktivne, (rola : Rola) => (rola.id.toString -> rola.naziv))
+        var odabranaRola : Option[Rola] = None
 
         bind("user", xhtml,
              "id" -> SHtml.hidden(() => userVar(currentUser)),
@@ -80,6 +82,12 @@ class Users {
                             doDeleteRole(rk)
                         })
                 )),
+             "rolaDodaj" -> {SHtml.select(choicesRole, Some(""),
+                                          rolaId => { odabranaRola = getFromEM(classOf[Rola], rolaId, Model) }) ++
+                             SHtml.submit(?("Dodaj rolu"), () => odabranaRola match {
+                        case Some(rola) => user.addRola(rola)
+                        case None =>
+                    } )},
              "submit" -> SHtml.submit(?("Save"), doAdd))
     }
 

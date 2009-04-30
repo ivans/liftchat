@@ -29,5 +29,13 @@ class User extends PrimaryKeyId with AktivanDefaultTrue with RecordInfo {
     @Transient
     def listRoleUsera = List.fromArray(this._listRoleUsera.toArray).asInstanceOf[List[RolaUser]]
 
+    def addRola(r : Rola) = {
+        val ru = new RolaUser
+        ru.user = this
+        ru.rola = r
+        this._listRoleUsera.add(ru)
+    }
+
     override def toString = "User[" + firstName + " " + lastName + " " + ured + "]"
+
 }
