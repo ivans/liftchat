@@ -15,4 +15,6 @@ class Rola extends PrimaryKeyId with AktivanDefaultTrue with RecordInfo {
     @Column{val nullable = false, val unique = true}
     var naziv : String = ""
 
+    override def toString = "Rola[" + naziv + "]"
+
 }

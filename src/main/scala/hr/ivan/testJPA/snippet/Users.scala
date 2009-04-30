@@ -21,14 +21,20 @@ class Users {
 
     def list (xhtml : NodeSeq) : NodeSeq = {
         val users = Model.createNamedQuery[User]("findAllUsers") getResultList()
-        users.flatMap(user =>
-            bind("user", xhtml,
-                 "firstName" -> Text(user.firstName),
-                 "lastName" -> Text(user.lastName),
-                 "ured" -> (if(user.ured != null) Text(user.ured.naziv) else Text("")),
-                 "edit" -> SHtml.link("/users/users", () => userVar(user), Text(?("Edit"))),
-                 "delete" -> deleteLink(classOf[User], user.id, "/users/users", Text(?("Delete")), Model),
-            ))
+        users.flatMap(user => {
+                bind("user", xhtml,
+                     "firstName" -> Text(user.firstName),
+                     "lastName" -> Text(user.lastName),
+                     "ured" -> (if(user.ured != null) Text(user.ured.naziv) else Text("")),
+                     "edit" -> SHtml.link("/users/users", () => userVar(user), Text(?("Edit"))),
+                     "listRole" -> user.listRoleUsera.flatMap(rk =>
+                        bind("rola", chooseTemplate("user", "listRole", xhtml),
+                             "naziv" -> rk.rola.naziv)
+                    ),
+                     "delete" -> deleteLink(classOf[User], user.id, "/users/users", Text(?("Delete")), Model),
+                )
+            }
+        )
     }
 
     object userVar extends RequestVar(new User())
@@ -49,18 +55,31 @@ class Users {
             }
         }
 
-        val currentId = user.id
+        def doDeleteRole(ru : RolaUser) = {
+            Log.info("doDeleteRole ru = " + ru)
+            Log.info("doDeleteRole user = " + user)
+            user._listRoleUsera.remove(ru)
+        }
+
+        val currentUser = user
         val choices = createSelectChoices(Some(?("Odaberite ured...")), UredDAO.allUredi, (ured : Ured) => (ured.id.toString -> ured.naziv))
         val default = if (user.ured != null) { Full(user.ured.id.toString) } else { Empty }
 
         bind("user", xhtml,
-             "id" -> SHtml.hidden(() => user.id = currentId),
+             "id" -> SHtml.hidden(() => userVar(currentUser)),
              "firstName" -> SHtml.text(user.firstName, user.firstName = _),
              "lastName" -> SHtml.text(user.lastName, user.lastName = _),
              "ured" -> SHtml.select(choices, default,
                                     uredId => {
                     user.ured = getFromEM(classOf[Ured], uredId, Model).getOrElse(null)
                 }),
+             "listRole" -> user.listRoleUsera.flatMap(rk =>
+                bind("rola", chooseTemplate("user", "listRole", xhtml),
+                     "naziv" -> rk.rola.naziv,
+                     "delete" -> SHtml.submit("Delete", () => {
+                            doDeleteRole(rk)
+                        })
+                )),
              "submit" -> SHtml.submit(?("Save"), doAdd))
     }
 

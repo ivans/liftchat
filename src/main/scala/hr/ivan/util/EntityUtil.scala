@@ -17,7 +17,14 @@ object EntityUtil {
     }
 
     trait RecordInfo {
-        var recordInfo = new RecordInfoImpl
+        var _recordInfo = new RecordInfoImpl
+        def recordInfo = {
+            if(_recordInfo == null) {
+                _recordInfo = new RecordInfoImpl
+            }
+            _recordInfo
+        }
+        def recordInfo_= (x : RecordInfoImpl) = _recordInfo = x
     }
 
     class RecordInfoListener {

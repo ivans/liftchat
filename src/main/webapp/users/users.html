@@ -6,6 +6,7 @@
             <th><lift:loc>First Name</lift:loc></th>
             <th><lift:loc>Last Name</lift:loc></th>
             <th><lift:loc>Ured</lift:loc></th>
+            <th><lift:loc>Role</lift:loc></th>
             <th></th>
             <th></th>
         </tr>
@@ -14,6 +15,13 @@
                 <td><user:firstName /></td>
                 <td><user:lastName /></td>
                 <td><user:ured /></td>
+                <td>
+                    <ul>
+                        <user:listRole>
+                            <li><rola:naziv /></li>
+                        </user:listRole>
+                    </ul>
+                </td>
                 <td><user:edit /></td>
                 <td><user:delete /></td>
             </tr>
@@ -38,6 +46,21 @@
                 <tr>
                     <td><lift:loc>Ured</lift:loc></td>
                     <td><user:ured /><lift:Msg id="ured" /></td>
+                </tr>
+                <tr>
+                    <td><lift:loc>Role</lift:loc></td>
+                    <td>
+                        <td>
+                            <table>
+                                <user:listRole>
+                                    <tr>
+                                        <td><rola:naziv /></td>
+                                        <td><rola:delete /></td>
+                                    </tr>
+                                </user:listRole>
+                            </table>
+                        </td>
+                    </td>
                 </tr>
                 <tr>
                     <td></td>

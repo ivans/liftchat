@@ -2,7 +2,8 @@ package hr.ivan.testJPA.model
 
 import javax.persistence.{Entity, Id, Column, OneToMany, ManyToOne, Transient}
 import javax.persistence.{GeneratedValue, GenerationType, Table, EntityListeners}
-import org.hibernate.annotations.{Cascade, CascadeType}
+import javax.persistence.{CascadeType, FetchType}
+import org.hibernate.annotations.{Cascade, CascadeType => HibernateCascadeType}
 
 import _root_.hr.ivan.util.EntityUtil._
 
@@ -20,4 +21,13 @@ class User extends PrimaryKeyId with AktivanDefaultTrue with RecordInfo {
     @ManyToOne{val optional = true}
     var ured : Ured = _
 
+  	@OneToMany {val cascade = Array(CascadeType.ALL), val fetch = FetchType.LAZY, 
+                val mappedBy = "user", val targetEntity = classOf[RolaUser]}
+    @Cascade {val value=Array(HibernateCascadeType.DELETE_ORPHAN)}
+    var _listRoleUsera : java.util.List[RolaUser] = new java.util.ArrayList[RolaUser]()
+
+    @Transient
+    def listRoleUsera = List.fromArray(this._listRoleUsera.toArray).asInstanceOf[List[RolaUser]]
+
+    override def toString = "User[" + firstName + " " + lastName + " " + ured + "]"
 }
