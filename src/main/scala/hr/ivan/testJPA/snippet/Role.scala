@@ -55,7 +55,7 @@ class Role {
 
         val current = rola
 
-        bind("rola", xhtml,
+    bind("rola", xhtml,
              "id" -> SHtml.hidden(() => rolaVar(current)),
              "naziv" -> SHtml.text(rola.naziv, rola.naziv = _),
              "submit" -> SHtml.submit(?("Save"), doAdd))
