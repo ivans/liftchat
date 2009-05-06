@@ -1,14 +1,23 @@
 <lift:surround with="default" at="content">
     <head><title><lift:loc>Add / edit role</lift:loc></title></head>
 
+    <style type="text/css">
+        .validationError {
+            color: red;
+            font-weight: bold;
+            border-style: solid;
+            border-color: red;
+        }
+    </style>
+
     <lift:Role.add form="post">
+
         <div style="background-color : #abcdef">
             <rola:id />
             <table>
                 <tr>
-                    <td><lift:loc>Naziv</lift:loc></td>
-                    <td><rola:naziv /><lift:Msg id="naziv" />
-                    </td>
+                    <td><rola:nazivLabel /></td>
+                    <td><rola:naziv /></td>
                 </tr>
                 <tr>
                     <td></td>

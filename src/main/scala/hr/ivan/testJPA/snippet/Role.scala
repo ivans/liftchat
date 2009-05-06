@@ -34,9 +34,13 @@ class Role {
     def rola = rolaVar.is
 
     def add (xhtml : NodeSeq) : NodeSeq = {
+
+        object nazivGreska extends RequestVar(false)
+
         def doAdd () = {
             if (rola.naziv.length == 0) {
-                error("naziv", "Naziv ne moze biti prazan")
+                error("nazivMsg", <span class="validationError">Naziv ne moze biti prazan</span>)
+                nazivGreska(true)
             } else {
                 try {
                     val nova = rola.id != 0
@@ -55,9 +59,16 @@ class Role {
 
         val current = rola
 
-    bind("rola", xhtml,
+        bind("rola", xhtml,
              "id" -> SHtml.hidden(() => rolaVar(current)),
-             "naziv" -> SHtml.text(rola.naziv, rola.naziv = _),
+             "nazivLabel" -> <label for="naziv"><lift:loc>Naziv</lift:loc></label>
+             % ("class" -> {println(nazivGreska); if(nazivGreska.is) "validationError" else ""}),
+             "naziv" -> (
+                SHtml.text(rola.naziv, rola.naziv = _)
+                % ("id" -> "naziv")
+                % ("class" -> {println(nazivGreska); if(nazivGreska.is) "validationError" else ""})
+                ++ <lift:Msg id="nazivMsg" />
+            ),
              "submit" -> SHtml.submit(?("Save"), doAdd))
     }
 }
