@@ -27,7 +27,7 @@ class Uredi {
                  "uredNadredjeni" -> Text(if (ured.uredNadredjeni != null) ured.uredNadredjeni.naziv else ""),
                  "brojUsera" -> Text(ured.useri.size.toString),
                  "edit" -> SHtml.link("/uredi/uredi", () => uredVar(ured), Text(?("Edit"))),
-                 "delete" -> deleteLink(classOf[Ured], ured.id, "/uredi/uredi", Text(?("Delete")), Model),
+                 "delete" -> deleteLink(classOf[Ured], ured.id, "/uredi/uredi", Text(?("Delete")), None, Model),
             ))
     }
 

@@ -31,7 +31,7 @@ class Users {
                         bind("rola", chooseTemplate("user", "listRole", xhtml),
                              "naziv" -> rk.rola.naziv)
                     ),
-                     "delete" -> deleteLink(classOf[User], user.id, "/users/users", Text(?("Delete")), Model),
+                     "delete" -> deleteLink(classOf[User], user.id, "/users/users", Text(?("Delete")), None, Model),
                 )
             }
         )

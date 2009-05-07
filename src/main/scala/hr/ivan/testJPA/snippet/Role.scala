@@ -28,12 +28,18 @@ class Role {
     }
 
     def list (implicit xhtml : NodeSeq) : NodeSeq = {
+
+        def doAfterDelete(success : Boolean, obj : Option[Rola]) = success match {
+            case true => notice("Rola " + (obj match {case Some(r) => r.naziv; case None => "??" }) + " je obrisana")
+            case false => notice("Rola nije obrisana")
+        }
+
         createList[Rola](RolaDAO.allRoleAktivne, "rola",
                          r => {
                 "naziv" -> Text(r.naziv) ::
                 "aktivan" -> SHtml.checkbox(r.aktivan.getOrElse(false), _ => Nil, ("disabled" -> "true")) ::
                 "edit" -> SHtml.link("/pages/role/addEdit", () => rolaVar(r), Text(?("Edit"))) ::
-                "delete" -> deleteLink(classOf[Rola], r.id, "/pages/role/list", Text(?("Delete")), Model) ::
+                "delete" -> deleteLink(classOf[Rola], r.id, "/pages/role/list", Text(?("Delete")), Some(doAfterDelete _), Model) ::
                 Nil
             }
         )

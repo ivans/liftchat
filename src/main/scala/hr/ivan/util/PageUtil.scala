@@ -34,22 +34,40 @@ object PageUtil {
         }
     }
 
-    def deleteLink[T <: AnyRef](clazz : Class[T], id : Long, dest : String, link : NodeSeq, model : LocalEMF with RequestVarEM) = {
+    def deleteLink[T <: AnyRef](clazz : Class[T], 
+                                id : Long,
+                                dest : String,
+                                link : NodeSeq,
+                                postDelete : Option[(Boolean, Option[T]) => Any],
+                                model : LocalEMF with RequestVarEM) = {
+
         SHtml.link(dest, () => {
-                var success = false;
+                var success = false
+                var obj : Option[T] = None
                 try {
-                    model.removeAndFlush(model.getReference(clazz, id))
-                    success = true
-                    notice("Succesfully deleted!")
+                    obj = Some(model.getReference(clazz, id).asInstanceOf[T])
+                    obj match {
+                        case Some(rola) =>
+                            model.removeAndFlush(rola);
+                            success = true
+                        case None =>
+                    }
                 } catch {
                     case ee : EntityExistsException =>
+                        success = false
                         logAndError("Entity exists! Maybe object has children?", ee)
                     case pe : PersistenceException =>
+                        success = false
                         logAndError("Persistence exception", pe)
                     case e : Throwable if !e.isInstanceOf[net.liftweb.http.ResponseShortcutException] =>
+                        success = false
                         logAndError("Some unexpected exception happened", e)
                 } finally {
-                    S.redirectTo(dest)
+                    def doFinallyBlock = postDelete match {
+                        case Some(func) => func(success, obj)
+                        case None => redirectTo(dest)
+                    }
+                    doFinallyBlock
                 }
             }, link)
     }
