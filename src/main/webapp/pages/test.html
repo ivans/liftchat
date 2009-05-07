@@ -1,6 +1,17 @@
 <lift:surround with="default" at="content">
     <h2>Test page!</h2>
 
+    <lift:Test.linkTest1/>
+    <lift:Test.linkTest2/>
+    <lift:Test.linkTest1b/>
+    <lift:Test.linkTest2b/>
+    <lift:Test.linkTest1c/>
+    <lift:Test.linkTest2c/>
+    <br/>Random link <lift:Test.linkTestRand/>
+    <br/>Random link with link to test1 <lift:Test.linkTestRandWithLinkToTest1/>
+
+    <hr/>
+
     <lift:Test.brojevi/>
 
     <table>
@@ -18,5 +29,7 @@
             </li>
         </lift:Test.brojevi2>
     </ul>
+
+    <hr/>
 
 </lift:surround>

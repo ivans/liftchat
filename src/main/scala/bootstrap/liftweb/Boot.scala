@@ -52,6 +52,8 @@ class Boot {
         Menu(Loc("Role JPA - list", List("pages", "role" , "list"), ?("Role JPA - list"))) ::
         Menu(Loc("Role JPA - add", List("pages", "role" , "addEdit"), ?("Role JPA - add"))) ::
         Menu(Loc("Test page", List("pages", "test"), ?("Test page"))) ::
+        Menu(Loc("Test page 1", List("pages", "tests", "test1"), ?("Test page"))) ::
+        Menu(Loc("Test page 2", List("pages", "tests", "test2"), ?("Test page"))) ::
         Nil
 
         LiftRules.setSiteMap(SiteMap(entries:_*))

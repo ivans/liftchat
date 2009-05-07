@@ -16,7 +16,8 @@ object PageUtil {
     def logAndError(e : String, ex : Throwable) = {
         error(e);
         Log.error(e + " " + (if(ex != null) ex.getMessage else ".."))
-        Log.error(ex.getStackTrace.map(x=>x.getClassName).foldLeft(""){(x,y) => x+y+"\n"})
+        //Log.error(ex.getStackTrace.map(x=>x.getClassName).foldLeft(""){(x,y) => x+y+"\n"})
+        ex.printStackTrace
     }
 
     def getAllCauses(e : Throwable) : String = if (e == null) {
@@ -33,19 +34,29 @@ object PageUtil {
         }
     }
 
-    def deleteLink[T <: AnyRef](clazz : Class[T], id : Long, redirectToDest : String, link : NodeSeq, model : LocalEMF with RequestVarEM) = {
-        SHtml.link("", () => {
+    def deleteLink[T <: AnyRef](clazz : Class[T], id : Long, dest : String, link : NodeSeq, model : LocalEMF with RequestVarEM) = {
+        SHtml.link(dest, () => {
+                var success = false;
                 try {
+                    println("a")
                     model.removeAndFlush(model.getReference(clazz, id))
+                    println("b")
+                    success = true
+                    notice("Succesfully deleted!")
                 } catch {
                     case ee : EntityExistsException =>
+                        println("e3")
                         logAndError("Entity exists! Maybe object has children?", ee)
                     case pe : PersistenceException =>
+                        println("e2")
                         logAndError("Persistence exception", pe)
                     case e : Throwable =>
+                        println("e1")
                         logAndError("Some strange exception happened", e)
                 } finally {
-                    redirectTo(redirectToDest)
+                    println("c")
+                    S.redirectTo(dest)
+                    println("d")
                 }
             }, link)
     }
