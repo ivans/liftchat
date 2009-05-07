@@ -9,8 +9,8 @@
             -->
             <property name="hibernate.dialect" value="org.hibernate.dialect.OracleDialect"/>
             <property name="hibernate.connection.driver_class" value="oracle.jdbc.OracleDriver"/>
-<!--            <property name="hibernate.connection.url" value="jdbc:oracle:thin:@zg-edu-02:1521:ora10"/>-->
-            <property name="hibernate.connection.url" value="jdbc:oracle:thin:@localhost:1521:XE"/>
+            <property name="hibernate.connection.url" value="jdbc:oracle:thin:@zg-edu-02:1521:ora10"/>
+<!--            <property name="hibernate.connection.url" value="jdbc:oracle:thin:@localhost:1521:XE"/>-->
             <property name="hibernate.connection.username" value="ivans"/>
             <property name="hibernate.connection.password" value="i"/>
 
