@@ -38,25 +38,18 @@ object PageUtil {
         SHtml.link(dest, () => {
                 var success = false;
                 try {
-                    println("a")
                     model.removeAndFlush(model.getReference(clazz, id))
-                    println("b")
                     success = true
                     notice("Succesfully deleted!")
                 } catch {
                     case ee : EntityExistsException =>
-                        println("e3")
                         logAndError("Entity exists! Maybe object has children?", ee)
                     case pe : PersistenceException =>
-                        println("e2")
                         logAndError("Persistence exception", pe)
-                    case e : Throwable =>
-                        println("e1")
-                        logAndError("Some strange exception happened", e)
+                    case e : Throwable if !e.isInstanceOf[net.liftweb.http.ResponseShortcutException] =>
+                        logAndError("Some unexpected exception happened", e)
                 } finally {
-                    println("c")
                     S.redirectTo(dest)
-                    println("d")
                 }
             }, link)
     }
