@@ -13,7 +13,11 @@ import javax.persistence.{EntityExistsException,PersistenceException}
 
 object PageUtil {
 
-    def logAndError(e : String, ex : Throwable) = { error(e); Log.error(e + " " + (if(ex != null) ex.getMessage else "..")) }
+    def logAndError(e : String, ex : Throwable) = {
+        error(e);
+        Log.error(e + " " + (if(ex != null) ex.getMessage else ".."))
+        Log.error(ex.getStackTrace.map(x=>x.getClassName).foldLeft(""){(x,y) => x+y+"\n"})
+    }
 
     def getAllCauses(e : Throwable) : String = if (e == null) {
         " END"
@@ -38,8 +42,8 @@ object PageUtil {
                         logAndError("Entity exists! Maybe object has children?", ee)
                     case pe : PersistenceException =>
                         logAndError("Persistence exception", pe)
-                    case _ =>
-                        logAndError("Some strange exception happened", null)
+                    case e : Throwable =>
+                        logAndError("Some strange exception happened", e)
                 } finally {
                     redirectTo(redirectToDest)
                 }

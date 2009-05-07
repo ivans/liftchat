@@ -28,24 +28,16 @@ class Role {
     }
 
     def list (implicit xhtml : NodeSeq) : NodeSeq = {
-
-        createList[Rola](RolaDAO.allRoleAktivne, "rola",
-                         rla => 
-                         "naziv" -> Text(rla.naziv) ::
-                         "aktivan" -> SHtml.checkbox(rola.aktivan.getOrElse(false), _ => Nil, ("disabled" -> "true")) ::
-                         "edit" -> SHtml.link("/pages/role/addEdit", () => rolaVar(rola), Text(?("Edit"))) ::
-                         "delete" -> deleteLink(classOf[Rola], rola.id, "/pages/role/list", Text(?("Delete")), Model) ::
-                         Nil
-        )
-
         val role = RolaDAO.allRoleAktivne
-        role.flatMap(rola =>
-            bind("rola", xhtml,
-                 "naziv" -> Text(rola.naziv),
-                 "aktivan" -> SHtml.checkbox(rola.aktivan.getOrElse(false), _ => Nil, ("disabled" -> "true")),
-                 "edit" -> SHtml.link("/pages/role/addEdit", () => rolaVar(rola), Text(?("Edit"))),
-                 "delete" -> deleteLink(classOf[Rola], rola.id, "/pages/role/list", Text(?("Delete")), Model),
-            ))
+        createList[Rola](RolaDAO.allRoleAktivne, "rola",
+                         r => {
+                "naziv" -> Text(r.naziv) ::
+                "aktivan" -> SHtml.checkbox(r.aktivan.getOrElse(false), _ => Nil, ("disabled" -> "true")) ::
+                "edit" -> SHtml.link("/pages/role/addEdit", () => rolaVar(r), Text(?("Edit"))) ::
+                "delete" -> deleteLink(classOf[Rola], r.id, "/pages/role/list", Text(?("Delete")), Model) ::
+                Nil
+            }
+        )
     }
 
     object rolaVar extends RequestVar(new Rola())
