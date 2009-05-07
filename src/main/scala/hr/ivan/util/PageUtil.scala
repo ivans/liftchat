@@ -3,11 +3,12 @@ package hr.ivan.util
 import scala.xml.{NodeSeq,Text}
 import org.scala_libs.jpa._
 
-import net.liftweb.util.{Log}
+import net.liftweb.util.{Log, BindHelpers, Helpers}
 import net.liftweb.http.SHtml
 import _root_.net.liftweb._
 import http._
 import S._
+import Helpers._
 
 import javax.persistence.{EntityExistsException,PersistenceException}
 
@@ -34,13 +35,18 @@ object PageUtil {
         }
     }
 
+    def createList[T](lista : Seq[T], itemName : String, params : T => Seq[BindParam])(implicit xhtml : NodeSeq) : NodeSeq = {
+        lista.flatMap(obj =>
+            bind(itemName, xhtml, params(obj):_*)
+        )
+    }
+
     def deleteLink[T <: AnyRef](clazz : Class[T], 
                                 id : Long,
                                 dest : String,
                                 link : NodeSeq,
                                 postDelete : Option[(Boolean, Option[T]) => Any],
                                 model : LocalEMF with RequestVarEM) = {
-
         SHtml.link(dest, () => {
                 var success = false
                 var obj : Option[T] = None

@@ -19,14 +19,6 @@ import Model._
 
 class Role {
 
-    type BindParamsGenerator[T] = T => Seq[BindParam]
-
-    def createList[T](lista : Seq[T], itemName : String, params : BindParamsGenerator[T]) (implicit xhtml : NodeSeq) : NodeSeq = {
-        lista.flatMap(obj =>
-            bind(itemName, xhtml, params(obj):_*)
-        )
-    }
-
     def list (implicit xhtml : NodeSeq) : NodeSeq = {
 
         def doAfterDelete(success : Boolean, obj : Option[Rola]) = success match {
