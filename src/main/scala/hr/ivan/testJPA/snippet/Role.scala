@@ -22,7 +22,7 @@ class Role {
     def list (implicit xhtml : NodeSeq) : NodeSeq = {
 
         def doAfterDelete(success : Boolean, obj : Option[Rola]) = success match {
-            case true => notice("Rola " + (obj match {case Some(r) => r.naziv; case None => "??" }) + " je obrisana")
+            case true => notice("Rola " + obj.map(_.naziv).getOrElse("??") + " je obrisana")
             case false => notice("Rola nije obrisana")
         }
 
@@ -66,16 +66,26 @@ class Role {
 
         val current = rola
 
-        bind("rola", xhtml,
-             "id" -> SHtml.hidden(() => rolaVar(current)),
-             "nazivLabel" -> <label for="naziv"><lift:loc>Naziv</lift:loc></label>
-             % ("class" -> {println(nazivGreska); if(nazivGreska.is) "validationError" else ""}),
-             "naziv" -> (
-                SHtml.text(rola.naziv, rola.naziv = _)
-                % ("id" -> "naziv")
-                % ("class" -> {println(nazivGreska); if(nazivGreska.is) "validationError" else ""})
-                ++ <lift:Msg id="nazivMsg" />
-            ),
-             "submit" -> SHtml.submit(?("Save"), doAdd))
+        def createField(name : String, valid : Boolean, invalidClass : Option[String], field : NodeSeq) : Seq[BindParam] = {
+            val clazz = ("class" -> {if(valid) invalidClass.getOrElse("invalid") })
+            val nameLabel = name + "Label"
+            val nameMsg = name + "Msg"
+            List(
+                nameLabel ->
+                <label for={name}>
+                    {chooseTemplate("rola", "nazivLabel", xhtml)}
+                </label>,
+                  nameMsg -> <lift:Msg id={nameMsg}/> % clazz,
+                  name -> field
+            )
+        }
+
+        def bindLista : Seq[BindParam] = Nil +
+        ("id" -> SHtml.hidden(() => rolaVar(current))) ++
+        createField("naziv", nazivGreska.is, Some("validationError"), SHtml.text(rola.naziv, rola.naziv = _)
+                    % ("id" -> "naziv")) +
+        ("submit" -> SHtml.submit(?("Save"), doAdd))
+
+        bind("rola", xhtml, bindLista:_*)
     }
 }
