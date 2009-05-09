@@ -41,6 +41,23 @@ object PageUtil {
         )
     }
 
+    /* TODO: popraviti kad Scala dobije default vrijednosti
+     */
+    def createField(parentName : String, name : String, valid : Boolean, invalidClass : Option[String], field : NodeSeq)(implicit xhtml : NodeSeq) : Seq[BindParam] = {
+        val clazz = if(!valid) invalidClass.getOrElse("invalid") else ""
+        println ("Class = " + clazz, "valid = " + valid)
+        val nameLabel = name + "Label"
+        val nameMsg = name + "Msg"
+        List(
+            nameLabel -> <label for={name}>{chooseTemplate(parentName, nameLabel, xhtml)}</label> % ("class" -> clazz),
+              nameMsg -> <lift:Msg id={nameMsg}/> % ("class" -> clazz),
+              name -> field
+        )
+    }
+
+    def createErrorNotification(name : String, invalidClass : Option[String], message : String) =
+    error(name + "Msg", <span class={invalidClass.getOrElse("invalid")}>{message}</span>)
+
     def deleteLink[T <: AnyRef](clazz : Class[T], 
                                 id : Long,
                                 dest : String,

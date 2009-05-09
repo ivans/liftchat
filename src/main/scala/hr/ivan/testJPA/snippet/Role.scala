@@ -1,6 +1,7 @@
 package hr.ivan.testJPA.snippet
 
 import scala.xml.{NodeSeq,Text}
+import scala.collection.mutable.HashMap
 
 import _root_.net.liftweb._
 import http._
@@ -40,14 +41,16 @@ class Role {
     object rolaVar extends RequestVar(new Rola())
     def rola = rolaVar.is
 
-    def add (xhtml : NodeSeq) : NodeSeq = {
+    def add (implicit xhtml : NodeSeq) : NodeSeq = {
 
-        object nazivGreska extends RequestVar(false)
+        object validations extends RequestVar[HashMap[String, Boolean]](new HashMap[String, Boolean] {
+                override def default(key: String): Boolean = true
+            })
 
         def doAdd () = {
             if (rola.naziv.length == 0) {
-                error("nazivMsg", <span class="validationError">Naziv ne moze biti prazan</span>)
-                nazivGreska(true)
+                createErrorNotification("naziv", Some("validationError"), "Naziv ne može biti prazan")
+                validations.is.put("naziv", false)
             } else {
                 try {
                     val nova = rola.id != 0
@@ -66,23 +69,9 @@ class Role {
 
         val current = rola
 
-        def createField(name : String, valid : Boolean, invalidClass : Option[String], field : NodeSeq) : Seq[BindParam] = {
-            val clazz = ("class" -> {if(valid) invalidClass.getOrElse("invalid") })
-            val nameLabel = name + "Label"
-            val nameMsg = name + "Msg"
-            List(
-                nameLabel ->
-                <label for={name}>
-                    {chooseTemplate("rola", "nazivLabel", xhtml)}
-                </label>,
-                  nameMsg -> <lift:Msg id={nameMsg}/> % clazz,
-                  name -> field
-            )
-        }
-
         def bindLista : Seq[BindParam] = Nil +
         ("id" -> SHtml.hidden(() => rolaVar(current))) ++
-        createField("naziv", nazivGreska.is, Some("validationError"), SHtml.text(rola.naziv, rola.naziv = _)
+        createField("rola", "naziv", validations.is("naziv"), Some("validationError"), SHtml.text(rola.naziv, rola.naziv = _)
                     % ("id" -> "naziv")) +
         ("submit" -> SHtml.submit(?("Save"), doAdd))
 
