@@ -47,6 +47,10 @@
     </entity>
 
     <entity class="Rola">
+        <named-query name="findAllRole">
+            <query><![CDATA[from Rola r]]>
+            </query>
+        </named-query>
         <named-query name="findAllRoleAktivne">
             <query><![CDATA[from Rola r where r._aktivan = 1]]>
             </query>

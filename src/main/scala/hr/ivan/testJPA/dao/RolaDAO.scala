@@ -8,4 +8,5 @@ object RolaDAO {
 
     def allRoleAktivne = Model.createNamedQuery[Rola]("findAllRoleAktivne").getResultList
 
+    def allRole = Model.createNamedQuery[Rola]("findAllRole").getResultList
 }

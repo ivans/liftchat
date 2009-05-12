@@ -27,7 +27,7 @@ class Role {
             case false => notice("Rola nije obrisana")
         }
 
-        createList[Rola](RolaDAO.allRoleAktivne, "rola",
+        createList[Rola](RolaDAO.allRole, "rola",
                          r => {
                 "naziv" -> Text(r.naziv) ::
                 "aktivan" -> SHtml.checkbox(r.aktivan.getOrElse(false), _ => Nil, ("disabled" -> "true")) ::
@@ -69,10 +69,13 @@ class Role {
 
         val current = rola
 
-        def bindLista : Seq[BindParam] = Nil +
+        def bindLista = Nil +
         ("id" -> SHtml.hidden(() => rolaVar(current))) ++
-        createField("rola", "naziv", validations.is("naziv"), Some("validationError"), SHtml.text(rola.naziv, rola.naziv = _)
-                    % ("id" -> "naziv")) +
+        createField("rola", "naziv",
+                    validations.is("naziv"), Some("validationError"),
+                    SHtml.text(rola.naziv, rola.naziv = _) % ("id" -> "naziv")) ++
+        createField("rola", "aktivan", true, None,
+                    SHtml.checkbox(rola.aktivan.getOrElse(false), rola.aktivan = _)) +
         ("submit" -> SHtml.submit(?("Save"), doAdd))
 
         bind("rola", xhtml, bindLista:_*)
