@@ -110,4 +110,5 @@ object EntityUtil {
             Some(model.getReference(klasa, new java.lang.Long(x)))
         }
     }
+
 }

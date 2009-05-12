@@ -1,6 +1,7 @@
 package hr.ivan.util
 
 import scala.xml.{NodeSeq,Text}
+import scala.collection.mutable.HashMap
 import org.scala_libs.jpa._
 
 import net.liftweb.util.{Log, BindHelpers, Helpers}
@@ -9,6 +10,8 @@ import _root_.net.liftweb._
 import http._
 import S._
 import Helpers._
+
+import hr.ivan.util.EntityUtil._
 
 import javax.persistence.{EntityExistsException,PersistenceException}
 
@@ -55,10 +58,48 @@ object PageUtil {
         )
     }
 
+    class Validations[T]
+    extends RequestVar[HashMap[String, Boolean]] (
+        new HashMap[String, Boolean] {
+            override def default(key: String): Boolean = true
+        }
+    ) {
+        case class ValidatorDesc(validator : T => Boolean, component : String, msg : Option[String]);
+        var validators : List[ValidatorDesc] = Nil
+        def addValidator(component : String, v : T => Boolean, msg : Option[String]) = {
+            validators = validators + ValidatorDesc(v, component, msg)
+        }
+        def doValidation(obj : T) : Boolean = {
+            var valid = true
+            for(validator <- validators) {
+                if(validator.validator(obj) == false) {
+                    createErrorNotification(validator.component, Some("validationError"), validator.msg.getOrElse("Pogreška u unosu"))
+                    this.is.put(validator.component, false)
+                    valid = false
+                }
+            }
+            valid
+        }
+    }
+
+    def trySavingEntity[T <: PrimaryKeyId](obj : T, msgInsert : Option[String], msgUpdate : Option[String])(implicit model : LocalEMF with RequestVarEM) {
+        try {
+            val nova = obj.id != 0
+            model.mergeAndFlush(obj)
+            notice(obj.id match {
+                    case 0 => msgInsert.getOrElse("Uspješno dodano")
+                    case _ => msgUpdate.getOrElse("Uspješno updatano")
+                })
+        } catch {
+            case ee : EntityExistsException => logAndError("Entitet već postoji ", ee)
+            case pe : PersistenceException => logAndError("Greška kod spremanja ", pe)
+        }
+    }
+
     def createErrorNotification(name : String, invalidClass : Option[String], message : String) =
     error(name + "Msg", <span class={invalidClass.getOrElse("invalid")}>{message}</span>)
 
-    def deleteLink[T <: AnyRef](clazz : Class[T], 
+    def deleteLink[T <: AnyRef](clazz : Class[T],
                                 id : Long,
                                 dest : String,
                                 link : NodeSeq,

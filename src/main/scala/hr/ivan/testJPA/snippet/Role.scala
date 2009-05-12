@@ -43,36 +43,24 @@ class Role {
 
     def add (implicit xhtml : NodeSeq) : NodeSeq = {
 
-        object validations extends RequestVar[HashMap[String, Boolean]](new HashMap[String, Boolean] {
-                override def default(key: String): Boolean = true
-            })
+        val current = rola
 
-        def doAdd () = {
-            if (rola.naziv.length == 0) {
-                createErrorNotification("naziv", Some("validationError"), "Naziv ne može biti prazan")
-                validations.is.put("naziv", false)
-            } else {
-                try {
-                    val nova = rola.id != 0
-                    Model.mergeAndFlush(rola)
-                    notice(rola.id match { 
-                            case 0 => "Nova rola dodana!"
-                            case _ => "Updatana postojeća rola"
-                        })
-                    redirectTo("/pages/role/list")
-                } catch {
-                    case ee : EntityExistsException => logAndError("Rola vec postoji ", ee)
-                    case pe : PersistenceException => logAndError("Error adding Rola ", pe)
-                }
-            }
+        object validation extends Validations[Rola] {
+            addValidator("naziv", _.naziv.length != 0, Some("Naziv ne može biti prazan"))
+            addValidator("naziv", _.naziv.length > 3, Some("Naziv mora biti duži od 3 znaka"))
         }
 
-        val current = rola
+        def doAdd () = {
+            if(validation.doValidation(rola) == true) {
+                trySavingEntity[Rola](rola, Some("Nova rola dodana"), Some("Updatana rola"))(Model)
+                redirectTo("/pages/role/list")
+            }
+        }
 
         def bindLista = Nil +
         ("id" -> SHtml.hidden(() => rolaVar(current))) ++
         createField("rola", "naziv",
-                    validations.is("naziv"), Some("validationError"),
+                    validation.is("naziv"), Some("validationError"),
                     SHtml.text(rola.naziv, rola.naziv = _) % ("id" -> "naziv")) ++
         createField("rola", "aktivan", true, None,
                     SHtml.checkbox(rola.aktivan.getOrElse(false), rola.aktivan = _)) +
