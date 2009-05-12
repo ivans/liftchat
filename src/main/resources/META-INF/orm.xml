@@ -57,4 +57,15 @@
         </named-query>
     </entity>
 
+    <entity class="Naselje">
+        <named-query name="findAllNaselja">
+            <query><![CDATA[from Naselje n]]>
+            </query>
+        </named-query>
+        <named-query name="findAllNaseljaAktivna">
+            <query><![CDATA[from Naselje n where n._aktivan = 1]]>
+            </query>
+        </named-query>
+    </entity>
+
 </entity-mappings>

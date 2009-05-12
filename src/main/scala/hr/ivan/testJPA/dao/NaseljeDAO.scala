@@ -5,10 +5,10 @@ import hr.ivan.testJPA.model._
 
 import hr.ivan.util.GenericDAO
 
-object UredDAO extends GenericDAO[Ured] {
+object NaseljeDAO extends GenericDAO[Naselje] {
 
     implicit val model = Model
 
-    def allUredi = getListFromNamedQuery("findAllUredi")
+    def allNaselja = getListFromNamedQuery("findAllNaselja")
 
 }

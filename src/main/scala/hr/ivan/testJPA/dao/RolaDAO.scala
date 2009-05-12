@@ -1,12 +1,16 @@
 package hr.ivan.testJPA.dao
 
 import hr.ivan.testJPA.model.Model
-
 import hr.ivan.testJPA.model._
 
-object RolaDAO {
+import hr.ivan.util.GenericDAO
 
-    def allRoleAktivne = Model.createNamedQuery[Rola]("findAllRoleAktivne").getResultList
+object RolaDAO extends GenericDAO[Rola] {
 
-    def allRole = Model.createNamedQuery[Rola]("findAllRole").getResultList
+    implicit val model = Model
+
+    def allRole = getListFromNamedQuery("findAllRole")
+
+    def allRoleAktivne = getListFromNamedQuery("findAllRoleAktivne")
+
 }

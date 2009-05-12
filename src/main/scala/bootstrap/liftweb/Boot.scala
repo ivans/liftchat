@@ -51,6 +51,8 @@ class Boot {
         Menu(Loc("Uredi JPA", List("uredi" , "uredi" ), ?("Uredi JPA"))) ::
         Menu(Loc("Role JPA - list", List("pages", "role" , "list"), ?("Role JPA - list"))) ::
         Menu(Loc("Role JPA - add", List("pages", "role" , "addEdit"), ?("Role JPA - add"))) ::
+        Menu(Loc("Naselja - list", List("pages", "sifarnici", "naselja", "naseljaList"), ?("Naselja - list"))) ::
+        Menu(Loc("Naselja - add", List("pages", "sifarnici", "naselja", "naseljaEdit"), ?("Naselja - add"))) ::
         Menu(Loc("Test page", List("pages", "test"), ?("Test page"))) ::
         Menu(Loc("Test page 1", List("pages", "tests", "test1"), ?("Test page"))) ::
         Menu(Loc("Test page 2", List("pages", "tests", "test2"), ?("Test page"))) ::

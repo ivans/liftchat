@@ -1,0 +1,53 @@
+<lift:surround with="default" at="content">
+    <head><title><lift:loc>Uredjivanje naselja</lift:loc></title></head>
+
+    <style type="text/css">
+        .validationError {
+            color: red;
+            font-weight: bold;
+            border-style: solid;
+            border-color: red;
+        }
+    </style>
+
+    <lift:Naselja.add form="post">
+
+        <div style="background-color : #abcdef">
+            <naselje:id />
+            <table>
+                <tr>
+                    <td><naselje:nazivLabel>Naselje</naselje:nazivLabel></td>
+                    <td>
+                        <naselje:naziv />
+                        <naselje:nazivMsg />
+                    </td>
+                </tr>
+                <tr>
+                    <td><naselje:sifraLabel>Sifra</naselje:sifraLabel></td>
+                    <td>
+                        <naselje:sifra />
+                        <naselje:sifraMsg />
+                    </td>
+                </tr>
+                <tr>
+                    <td><naselje:mbrLabel>Mbr</naselje:mbrLabel></td>
+                    <td>
+                        <naselje:mbr />
+                        <naselje:mbrMsg />
+                    </td>
+                </tr>
+                <tr>
+                    <td><naselje:aktivanLabel>Aktivan?</naselje:aktivanLabel></td>
+                    <td>
+                        <naselje:aktivan /><naselje:aktivanMsg />
+                    </td>
+                </tr>
+                <tr>
+                    <td></td>
+                    <td><naselje:submit /></td>
+                </tr>
+            </table>
+        </div>
+    </lift:Naselja.add>
+
+</lift:surround>
