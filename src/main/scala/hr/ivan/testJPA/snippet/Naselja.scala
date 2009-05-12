@@ -13,12 +13,12 @@ import javax.persistence.{Entity, EntityExistsException,PersistenceException}
 
 import hr.ivan.testJPA.model._
 import hr.ivan.testJPA.dao._
-import hr.ivan.util.{PageUtil, EntityUtil}
+import hr.ivan.util.{PageUtil, EntityUtil, SimpleSifarnik}
 import EntityUtil._
 import PageUtil._
 import Model._
 
-class Naselja {
+class Naselja extends SimpleSifarnik[Naselje](new Naselje) {
 
     def list (implicit xhtml : NodeSeq) : NodeSeq = {
 
@@ -33,19 +33,16 @@ class Naselja {
                 "sifra" -> Text(n.sifra) ::
                 "mbr" -> Text(n.mbr) ::
                 "aktivan" -> SHtml.checkbox(n.aktivan.getOrElse(false), _ => Nil, ("disabled" -> "true")) ::
-                "edit" -> SHtml.link("/pages/sifarnici/naselja/naseljaEdit", () => naseljeVar(n), Text(?("Edit"))) ::
+                "edit" -> SHtml.link("/pages/sifarnici/naselja/naseljaEdit", () => entityVar(n), Text(?("Edit"))) ::
                 "delete" -> deleteLink(classOf[Naselje], n.id, "/pages/sifarnici/naselja/naseljaList", Text(?("Delete")), Some(doAfterDelete _), Model) ::
                 Nil
             }
         )
     }
 
-    object naseljeVar extends RequestVar(new Naselje())
-    def naselje = naseljeVar.is
-
     def add (implicit xhtml : NodeSeq) : NodeSeq = {
 
-        val current = naselje
+        val current = entity
 
         object validation extends Validations[Naselje] {
             addValidator("naziv", _.naziv.length != 0, Some("Naziv ne može biti prazan"))
@@ -53,24 +50,24 @@ class Naselja {
         }
 
         def doAdd () = {
-            if(validation.doValidation(naselje) == true) {
-                trySavingEntity[Naselje](naselje, Some("Novo naselje dodano"), Some("Spremljene promjene"))(Model)
+            if(validation.doValidation(entity) == true) {
+                trySavingEntity[Naselje](entity, Some("Novo naselje dodano"), Some("Spremljene promjene"))(Model)
                 redirectTo("/pages/sifarnici/naselja/naseljaList")
             }
         }
 
         def bindLista = Nil +
-        ("id" -> SHtml.hidden(() => naseljeVar(current))) ++
+        ("id" -> SHtml.hidden(() => entityVar(current))) ++
         createField("naselje", "naziv",
                     validation.is("naziv"), Some("validationError"),
-                    SHtml.text(naselje.naziv, naselje.naziv = _)) ++
+                    SHtml.text(entity.naziv, entity.naziv = _)) ++
         createField("naselje", "sifra",
                     validation.is("sifra"), Some("validationError"),
-                    SHtml.text(naselje.sifra, naselje.sifra = _)) ++
+                    SHtml.text(entity.sifra, entity.sifra = _)) ++
         createField("naselje", "mbr", true, None,
-                    SHtml.text(naselje.mbr, naselje.mbr = _)) ++
+                    SHtml.text(entity.mbr, entity.mbr = _)) ++
         createField("naselje", "aktivan", true, None,
-                    SHtml.checkbox(naselje.aktivan.getOrElse(false), naselje.aktivan = _)) +
+                    SHtml.checkbox(entity.aktivan.getOrElse(false), entity.aktivan = _)) +
         ("submit" -> SHtml.submit(?("Save"), doAdd))
 
         bind("naselje", xhtml, bindLista:_*)
