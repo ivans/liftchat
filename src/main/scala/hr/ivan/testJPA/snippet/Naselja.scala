@@ -29,9 +29,9 @@ class Naselja extends SimpleSifarnik[Naselje](new Naselje) {
 
         createList[Naselje](NaseljeDAO.allNaselja, "naselje",
                             n => {
-                "naziv" -> Text(n.naziv) ::
-                "sifra" -> Text(n.sifra) ::
-                "mbr" -> Text(n.mbr) ::
+                "naziv" -> outputText(n.naziv) ::
+                "sifra" -> outputText(n.sifra) ::
+                "mbr" -> outputText(n.mbr) ::
                 "aktivan" -> SHtml.checkbox(n.aktivan.getOrElse(false), _ => Nil, ("disabled" -> "true")) ::
                 "edit" -> SHtml.link("/pages/sifarnici/naselja/naseljaEdit", () => entityVar(n), Text(?("Edit"))) ::
                 "delete" -> deleteLink(classOf[Naselje], n.id, "/pages/sifarnici/naselja/naseljaList", Text(?("Delete")), Some(doAfterDelete _), Model) ::

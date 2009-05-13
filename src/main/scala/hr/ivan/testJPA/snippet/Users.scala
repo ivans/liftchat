@@ -23,32 +23,31 @@ class Users extends SimpleSifarnik[User](new User) {
         val users = Model.createNamedQuery[User]("findAllUsers") getResultList()
         users.flatMap(user => {
                 bind("user", xhtml,
-                     "firstName" -> Text(user.firstName),
-                     "lastName" -> Text(user.lastName),
-                     "ured" -> (if(user.ured != null) Text(user.ured.naziv) else Text("")),
-                     "edit" -> SHtml.link("/users/users", () => entityVar(user), Text(?("Edit"))),
+                     "firstName" -> outputText(user.firstName),
+                     "lastName" -> outputText(user.lastName),
+                     "ured" -> outputText(user.ured.naziv),
+                     "edit" -> SHtml.link("/pages/sifarnici/users/users", () => entityVar(user), Text(?("Edit"))),
                      "listRole" -> user.listRoleUsera.flatMap(rk =>
                         bind("rola", chooseTemplate("user", "listRole", xhtml),
                              "naziv" -> rk.rola.naziv)
                     ),
-                     "delete" -> deleteLink(classOf[User], user.id, "/users/users", Text(?("Delete")), None, Model),
+                     "delete" -> deleteLink(classOf[User], user.id, "/pages/sifarnici/users/users", Text(?("Delete")), Some(doAfterDelete _), Model),
                 )
             }
         )
     }
 
-    def add (xhtml : NodeSeq) : NodeSeq = {
+    def add (implicit xhtml : NodeSeq) : NodeSeq = {
+
+        object validation extends Validations[User] {
+            addValidator("lastName", _.lastName.length != 0, Some("The users last name cannot be blank"))
+            addValidator("listRole", _.listRoleUsera.size > 0, Some("Potrebno je odabrati bar jednu rolu"))
+        }
+
         def doAdd () = {
-            if (entity.lastName.length == 0) {
-                error("lastName", "The users last name cannot be blank")
-            } else {
-                try {
-                    Model.mergeAndFlush(entity)
-                    redirectTo("/users/users")
-                } catch {
-                    case ee : EntityExistsException => logAndError("Author already exists ", ee)
-                    case pe : PersistenceException => logAndError("Error adding user ", pe)
-                }
+            if(validation.doValidation(entity) == true) {
+                trySavingEntity[User](entity, Some("Korisnik je uspješno dodan"), Some("Promjene na korsiniku su uspješno spremljene."))(Model)
+                redirectTo("/pages/sifarnici/users/users")
             }
         }
 
@@ -59,33 +58,41 @@ class Users extends SimpleSifarnik[User](new User) {
         }
 
         val currentUser = entity
-        val choices = createSelectChoices(Some(?("Odaberite ured...")), UredDAO.allUredi, (ured : Ured) => (ured.id.toString -> ured.naziv))
-        val default = if (entity.ured != null) { Full(entity.ured.id.toString) } else { Empty }
+        val choicesUredi = createSelectChoices(Some(?("Odaberite ured...")), UredDAO.allUredi, (ured : Ured) => (ured.id.toString -> ured.naziv))
         val choicesRole = createSelectChoices(Some(?("Odaberite rolu...")), RolaDAO.allRoleAktivne, (rola : Rola) => (rola.id.toString -> rola.naziv))
-        var odabranaRola : Option[Rola] = None
+        val selectedUredId = safeGet(entity.ured.id.toString, None)
+        var selectedRola : Option[Rola] = None
 
-        bind("user", xhtml,
-             "id" -> SHtml.hidden(() => entityVar(currentUser)),
-             "firstName" -> SHtml.text(entity.firstName, entity.firstName = _),
-             "lastName" -> SHtml.text(entity.lastName, entity.lastName = _),
-             "ured" -> SHtml.select(choices, default,
-                                    uredId => {
+        def bindLista = Nil +
+        ("id" -> SHtml.hidden(() => entityVar(currentUser))) ++
+        createField("user", "firstName", true, None, SHtml.text(entity.firstName, entity.firstName = _)) ++
+        createField("user", "lastName", validation.is("lastName"), Some("validationError"), SHtml.text(entity.lastName, entity.lastName = _)) ++
+        createField("user", "ured", validation.is("ured"), Some("validationError"),
+                    SHtml.select(choicesUredi,  selectedUredId,
+                                 uredId => {
                     entity.ured = getFromEM(classOf[Ured], uredId, Model).getOrElse(null)
-                }),
-             "listRole" -> entity.listRoleUsera.flatMap(rk =>
+                })
+        ) ++
+        createField("user", "listRole", validation.is("listRole"), Some("validationError"),
+                    entity.listRoleUsera.flatMap(rk =>
                 bind("rola", chooseTemplate("user", "listRole", xhtml),
                      "naziv" -> rk.rola.naziv,
                      "delete" -> SHtml.submit("Delete", () => {
                             doDeleteRole(rk)
                         })
-                )),
-             "rolaDodaj" -> {SHtml.select(choicesRole, Some(""),
-                                          rolaId => { odabranaRola = getFromEM(classOf[Rola], rolaId, Model) }) ++
-                             SHtml.submit(?("Dodaj rolu"), () => odabranaRola match {
+                ))
+        ) ++
+        createField("user", "rolaDodaj", validation.is("rolaDodaj"), Some("validationError"),
+                    {SHtml.select(choicesRole, Some(""),
+                                  rolaId => { selectedRola = getFromEM(classOf[Rola], rolaId, Model) }) ++
+                     SHtml.submit(?("Dodaj rolu"), () => selectedRola match {
                         case Some(rola) => entity.addRola(rola)
                         case None =>
-                    } )},
-             "submit" -> SHtml.submit(?("Save"), doAdd))
+                    } )}
+        ) +
+        ("submit" -> SHtml.submit(?("Save"), doAdd))
+
+        bind("user", xhtml, bindLista:_*)
     }
 
 }

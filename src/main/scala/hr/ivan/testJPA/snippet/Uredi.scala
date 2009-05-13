@@ -23,9 +23,9 @@ class Uredi {
         val uredi = UredDAO.allUredi
         uredi.flatMap(ured =>
             bind("ured", xhtml,
-                 "naziv" -> Text(ured.naziv),
-                 "uredNadredjeni" -> Text(if (ured.uredNadredjeni != null) ured.uredNadredjeni.naziv else ""),
-                 "brojUsera" -> Text(ured.useri.size.toString),
+                 "naziv" -> outputText(ured.naziv),
+                 "uredNadredjeni" -> outputText(ured.uredNadredjeni.naziv),
+                 "brojUsera" -> outputText(ured.useri.size.toString),
                  "edit" -> SHtml.link("/uredi/uredi", () => uredVar(ured), Text(?("Edit"))),
                  "delete" -> deleteLink(classOf[Ured], ured.id, "/uredi/uredi", Text(?("Delete")), None, Model),
             ))

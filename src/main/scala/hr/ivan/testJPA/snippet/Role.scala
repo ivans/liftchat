@@ -29,7 +29,7 @@ class Role {
 
         createList[Rola](RolaDAO.allRole, "rola",
                          r => {
-                "naziv" -> Text(r.naziv) ::
+                "naziv" -> outputText(r.naziv) ::
                 "aktivan" -> SHtml.checkbox(r.aktivan.getOrElse(false), _ => Nil, ("disabled" -> "true")) ::
                 "edit" -> SHtml.link("/pages/role/addEdit", () => rolaVar(r), Text(?("Edit"))) ::
                 "delete" -> deleteLink(classOf[Rola], r.id, "/pages/role/list", Text(?("Delete")), Some(doAfterDelete _), Model) ::

@@ -40,12 +40,12 @@
                     </td>
                 </tr>
                 <tr>
-                    <td><lift:loc>Last Name</lift:loc></td>
-                    <td><user:lastName /><lift:Msg id="lastName" /></td>
+                    <td><user:lastNameLabel>Last Name</user:lastNameLabel></td>
+                    <td><user:lastName /><lift:Msg id="lastNameMsg" /></td>
                 </tr>
                 <tr>
                     <td><lift:loc>Ured</lift:loc></td>
-                    <td><user:ured /><lift:Msg id="ured" /></td>
+                    <td><user:ured /><lift:Msg id="uredMsg" /></td>
                 </tr>
                 <tr>
                     <td><lift:loc>Role</lift:loc></td>
@@ -60,6 +60,7 @@
                                     </tr>
                                 </user:listRole>
                             </table>
+                            <lift:Msg id="listRoleMsg" />
                         </td>
                     </td>
                 </tr>

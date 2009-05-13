@@ -30,6 +30,28 @@ object PageUtil {
         e.getMessage + " :: " + getAllCauses(e.getCause)
     }
 
+    def safeGet[T](value : => T, default : Option[T]) : Option[T] = {
+        try {
+            if(value != null) return Some(value)
+            else return default
+        } catch {
+            case e : NullPointerException => return default
+        }
+    }
+
+    def outputText(text : => String) : Text = {
+        Text(safeGet(text, ""))
+    }
+
+    def safeGet[T](value : => T, default : T) : T = {
+        try {
+            if(value != null) return value
+            else return default
+        } catch {
+            case e : NullPointerException => return default
+        }
+    }
+
     def createSelectChoices[T](emptyChoice : Option[String], lista : Seq[T], mapping : T => (String, String)) = {
         def list = lista.map(mapping)
         emptyChoice match {

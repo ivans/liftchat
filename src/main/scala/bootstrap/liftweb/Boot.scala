@@ -47,7 +47,7 @@ class Boot {
         Menu(Loc("Books", List("books","list"), ?("Book List"))) ::
         Menu(Loc("Add Book", List("books" , "add"), ?("Add Book"), Hidden)) ::
         Menu(Loc("BookSearch", List("books" , "search" ), ?("Book Search"))) ::
-        Menu(Loc("Users JPA", List("users" , "users" ), ?("Users JPA"))) ::
+        Menu(Loc("Users JPA", List("pages", "sifarnici", "users" , "users" ), ?("Users JPA"))) ::
         Menu(Loc("Uredi JPA", List("uredi" , "uredi" ), ?("Uredi JPA"))) ::
         Menu(Loc("Role JPA - list", List("pages", "role" , "list"), ?("Role JPA - list"))) ::
         Menu(Loc("Role JPA - add", List("pages", "role" , "addEdit"), ?("Role JPA - add"))) ::

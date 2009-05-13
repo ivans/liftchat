@@ -21,10 +21,10 @@ class AuthorOps {
   
         authors.flatMap(author =>
             bind("author", xhtml,
-                 "name" -> Text(author.firstName + " " + author.lastName),
+                 "name" -> outputText(author.firstName + " " + author.lastName),
                  "count" -> SHtml.link("/books/search.html", {() =>
                         BookOps.resultVar(Model.createNamedQuery[Book]("findBooksByAuthor", "id" ->author.id).getResultList.toList)
-                    }, Text(author.books.size().toString)),
+                    }, outputText(author.books.size().toString)),
                  "edit" -> SHtml.link("add.html", () => authorVar(author), Text(?("Edit"))),
                  "delete" -> SHtml.link("", () => {
                         Log.info("deleting instance Author ", author.id, author.firstName, author.lastName)
