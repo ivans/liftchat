@@ -70,9 +70,9 @@ object PageUtil {
      */
     def createField(parentName : String, name : String, valid : Boolean, invalidClass : Option[String], field : NodeSeq)(implicit xhtml : NodeSeq) : Seq[BindParam] = {
         val clazz = if(!valid) invalidClass.getOrElse("invalid") else ""
-        println ("Class = " + clazz, "valid = " + valid)
         val nameLabel = name + "Label"
         val nameMsg = name + "Msg"
+        Log.info("createField " + parentName + "." + name + " valid = " + valid)
         List(
             nameLabel -> <label for={name}>{chooseTemplate(parentName, nameLabel, xhtml)}</label> % ("class" -> clazz),
               nameMsg -> <lift:Msg id={nameMsg}/> % ("class" -> clazz),
@@ -86,12 +86,17 @@ object PageUtil {
             override def default(key: String): Boolean = true
         }
     ) {
-        case class ValidatorDesc(validator : T => Boolean, component : String, msg : Option[String]);
+        case class ValidatorDesc(validator : T => Boolean, 
+                                 component : String,
+                                 msg : Option[String]);
         var validators : List[ValidatorDesc] = Nil
+
         def addValidator(component : String, v : T => Boolean, msg : Option[String]) = {
             validators = validators + ValidatorDesc(v, component, msg)
         }
+
         def doValidation(obj : T) : Boolean = {
+            Log.info("Processing validations for " + obj)
             var valid = true
             for(validator <- validators) {
                 if(validator.validator(obj) == false) {

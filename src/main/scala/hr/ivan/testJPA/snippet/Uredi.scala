@@ -25,16 +25,16 @@ class Uredi extends SimpleSifarnik[Ured](new Ured) {
                 "naziv" -> outputText(u.naziv) ::
                 "uredNadredjeni" -> outputText(u.uredNadredjeni.naziv) ::
                 "brojUsera" -> outputText(u.useri.size.toString) ::
-                "edit" -> SHtml.link("/uredi/uredi", () => entityVar(u), Text(?("Edit"))) ::
-                "delete" -> deleteLink(classOf[Ured], u.id, "/uredi/uredi", Text(?("Delete")), Some(doAfterDelete _), Model) ::
+                "edit" -> SHtml.link("/pages/sifarnici/uredi/uredi", () => entityVar(u), Text(?("Edit"))) ::
+                "delete" -> deleteLink(classOf[Ured], u.id, "/pages/sifarnici/uredi/uredi", Text(?("Delete")), Some(doAfterDelete _), Model) ::
                 Nil
             }
         )
     }
 
-    def noviUred = SHtml.link("/uredi/uredi", () => entityVar(new Ured), Text(?("New ured")))
+    def noviUred = SHtml.link("/pages/sifarnici/uredi/uredi", () => entityVar(new Ured), Text(?("New ured")))
 
-    def add (xhtml : NodeSeq) : NodeSeq = {
+    def add (implicit xhtml : NodeSeq) : NodeSeq = {
 
         object validation extends Validations[Ured] {
             addValidator("naziv", _.naziv.length != 0, Some("Naziv ne može biti prazan"))
@@ -43,7 +43,7 @@ class Uredi extends SimpleSifarnik[Ured](new Ured) {
         def doAdd () = {
             if(validation.doValidation(entity) == true) {
                 trySavingEntity[Ured](entity, Some("Novi ured dodan"), Some("Spremljene promjene na uredu"))(Model)
-                redirectTo("/uredi/uredi")
+                redirectTo("/pages/sifarnici/uredi/uredi")
             }
         }
 
@@ -55,12 +55,17 @@ class Uredi extends SimpleSifarnik[Ured](new Ured) {
             entity.uredNadredjeni = getFromEM(classOf[Ured], uredId, Model).getOrElse(null)
         }
 
-        bind("ured", xhtml,
-             "id" -> SHtml.hidden(() => entityVar(current)),
-             "naziv" -> SHtml.text(entity.naziv, entity.naziv = _),
-             "uredNadredjeni" -> SHtml.select(choicesUred, selectedUredId, doUredSelect),
-             "mode" -> Text(if(entity.id == 0) "Add ured" else "Edit ured"),
-             "submit" -> SHtml.submit(?("Save"), doAdd))
+        def bindLista = Nil +
+        ("id" -> SHtml.hidden(() => entityVar(current))) ++
+        createField("ured", "naziv",
+                    validation.is("naziv"), Some("validationError"),
+                    SHtml.text(entity.naziv, entity.naziv = _)) ++
+        createField("ured", "uredNadredjeni", true, None,
+                    SHtml.select(choicesUred, selectedUredId, doUredSelect)) +
+        ("mode" -> Text(if(entity.id == 0) "Add ured" else "Edit ured")) +
+        ("submit" -> SHtml.submit(?("Save"), doAdd))
+
+        bind("ured", xhtml, bindLista:_*)
     }
 
 }
