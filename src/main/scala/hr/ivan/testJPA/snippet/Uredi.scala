@@ -12,60 +12,54 @@ import javax.persistence.{EntityExistsException,PersistenceException}
 
 import hr.ivan.testJPA.model._
 import hr.ivan.testJPA.dao._
-import hr.ivan.util.{PageUtil, EntityUtil}
+import hr.ivan.util.{PageUtil, EntityUtil, SimpleSifarnik}
 import EntityUtil._
 import PageUtil._
 import Model._
 
-class Uredi {
+class Uredi extends SimpleSifarnik[Ured](new Ured) {
 
-    def list (xhtml : NodeSeq) : NodeSeq = {
-        val uredi = UredDAO.allUredi
-        uredi.flatMap(ured =>
-            bind("ured", xhtml,
-                 "naziv" -> outputText(ured.naziv),
-                 "uredNadredjeni" -> outputText(ured.uredNadredjeni.naziv),
-                 "brojUsera" -> outputText(ured.useri.size.toString),
-                 "edit" -> SHtml.link("/uredi/uredi", () => uredVar(ured), Text(?("Edit"))),
-                 "delete" -> deleteLink(classOf[Ured], ured.id, "/uredi/uredi", Text(?("Delete")), None, Model),
-            ))
+    def list (implicit xhtml : NodeSeq) : NodeSeq = {
+        createList[Ured](UredDAO.allUredi, "ured",
+                         u => {
+                "naziv" -> outputText(u.naziv) ::
+                "uredNadredjeni" -> outputText(u.uredNadredjeni.naziv) ::
+                "brojUsera" -> outputText(u.useri.size.toString) ::
+                "edit" -> SHtml.link("/uredi/uredi", () => entityVar(u), Text(?("Edit"))) ::
+                "delete" -> deleteLink(classOf[Ured], u.id, "/uredi/uredi", Text(?("Delete")), Some(doAfterDelete _), Model) ::
+                Nil
+            }
+        )
     }
 
-    object uredVar extends RequestVar(new Ured())
-    def ured = uredVar.is
-
-    def noviUred = SHtml.link("/uredi/uredi", () => uredVar(new Ured), Text(?("New ured")))
+    def noviUred = SHtml.link("/uredi/uredi", () => entityVar(new Ured), Text(?("New ured")))
 
     def add (xhtml : NodeSeq) : NodeSeq = {
+
+        object validation extends Validations[Ured] {
+            addValidator("naziv", _.naziv.length != 0, Some("Naziv ne može biti prazan"))
+        }
+
         def doAdd () = {
-            if (ured.naziv.length == 0) {
-                error("naziv", "Naziv ureda ne moze biti prazan!")
-            } else {
-                try {
-                    //Model.persistAndFlush(ured)
-                    Model.mergeAndFlush(ured)
-                    redirectTo("/uredi/uredi")
-                } catch {
-                    case ee : EntityExistsException => logAndError("Author already exists", ee)
-                    case pe : PersistenceException => logAndError("Error adding user", pe)
-                }
+            if(validation.doValidation(entity) == true) {
+                trySavingEntity[Ured](entity, Some("Novi ured dodan"), Some("Spremljene promjene na uredu"))(Model)
+                redirectTo("/uredi/uredi")
             }
         }
 
-        val current = ured
-        val choices = createSelectChoices(Some(?("Odaberite ured...")), UredDAO.allUredi, (ured : Ured) => (ured.id.toString -> ured.naziv))
-        val default = if (ured.uredNadredjeni != null) { Full(ured.uredNadredjeni.id.toString) } else { Empty }
+        val current = entity
+        val choicesUred = createSelectChoices(Some(?("Odaberite ured...")), UredDAO.allUredi, (ured : Ured) => (ured.id.toString -> ured.naziv))
+        def selectedUredId = safeGet(entity.uredNadredjeni.id.toString, None)
 
         def doUredSelect(uredId : String) = {
-            ured.uredNadredjeni = getFromEM(classOf[Ured], uredId, Model).getOrElse(null)
+            entity.uredNadredjeni = getFromEM(classOf[Ured], uredId, Model).getOrElse(null)
         }
 
         bind("ured", xhtml,
-             "id" -> SHtml.hidden(() => uredVar(current)),
-             "naziv" -> SHtml.text(ured.naziv, ured.naziv = _),
-             "id2" -> Text(ured.id.toString),
-             "uredNadredjeni" -> SHtml.select(choices, default, doUredSelect),
-             "mode" -> Text(if(ured.id == 0) "Add ured" else "Edit ured"),
+             "id" -> SHtml.hidden(() => entityVar(current)),
+             "naziv" -> SHtml.text(entity.naziv, entity.naziv = _),
+             "uredNadredjeni" -> SHtml.select(choicesUred, selectedUredId, doUredSelect),
+             "mode" -> Text(if(entity.id == 0) "Add ured" else "Edit ured"),
              "submit" -> SHtml.submit(?("Save"), doAdd))
     }
 
