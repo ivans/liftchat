@@ -67,7 +67,7 @@ class Users extends SimpleSifarnik[User](new User) {
         ("id" -> SHtml.hidden(() => entityVar(currentUser))) ++
         createField("user", "firstName", true, None, SHtml.text(entity.firstName, entity.firstName = _)) ++
         createField("user", "lastName", validation, Some("validationError"), SHtml.text(entity.lastName, entity.lastName = _)) ++
-        createField("user", "ured", validation, Some("validationError"),
+        createField("user", "ured", true, None,
                     SHtml.select(choicesUredi,  selectedUredId,
                                  uredId => {
                     entity.ured = getFromEM(classOf[Ured], uredId, Model).getOrElse(null)
