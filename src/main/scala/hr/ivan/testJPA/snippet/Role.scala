@@ -59,8 +59,7 @@ class Role {
 
         def bindLista = Nil +
         ("id" -> SHtml.hidden(() => rolaVar(current))) ++
-        createField("rola", "naziv",
-                    validation.is("naziv"), Some("validationError"),
+        createField("rola", "naziv", validation, Some("validationError"),
                     SHtml.text(rola.naziv, rola.naziv = _) % ("id" -> "naziv")) ++
         createField("rola", "aktivan", true, None,
                     SHtml.checkbox(rola.aktivan.getOrElse(false), rola.aktivan = _)) +

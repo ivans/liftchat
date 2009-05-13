@@ -66,14 +66,14 @@ class Users extends SimpleSifarnik[User](new User) {
         def bindLista = Nil +
         ("id" -> SHtml.hidden(() => entityVar(currentUser))) ++
         createField("user", "firstName", true, None, SHtml.text(entity.firstName, entity.firstName = _)) ++
-        createField("user", "lastName", validation.is("lastName"), Some("validationError"), SHtml.text(entity.lastName, entity.lastName = _)) ++
-        createField("user", "ured", validation.is("ured"), Some("validationError"),
+        createField("user", "lastName", validation, Some("validationError"), SHtml.text(entity.lastName, entity.lastName = _)) ++
+        createField("user", "ured", validation, Some("validationError"),
                     SHtml.select(choicesUredi,  selectedUredId,
                                  uredId => {
                     entity.ured = getFromEM(classOf[Ured], uredId, Model).getOrElse(null)
                 })
         ) ++
-        createField("user", "listRole", validation.is("listRole"), Some("validationError"),
+        createField("user", "listRole", validation, Some("validationError"),
                     entity.listRoleUsera.flatMap(rk =>
                 bind("rola", chooseTemplate("user", "listRole", xhtml),
                      "naziv" -> rk.rola.naziv,
@@ -82,7 +82,7 @@ class Users extends SimpleSifarnik[User](new User) {
                         })
                 ))
         ) ++
-        createField("user", "rolaDodaj", validation.is("rolaDodaj"), Some("validationError"),
+        createField("user", "rolaDodaj", validation, Some("validationError"),
                     {SHtml.select(choicesRole, Some(""),
                                   rolaId => { selectedRola = getFromEM(classOf[Rola], rolaId, Model) }) ++
                      SHtml.submit(?("Dodaj rolu"), () => selectedRola match {

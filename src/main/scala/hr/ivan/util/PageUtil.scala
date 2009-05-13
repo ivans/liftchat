@@ -80,6 +80,10 @@ object PageUtil {
         )
     }
 
+    def createField[T](parentName : String, name : String, validations : Validations[T], invalidClass : Option[String], field : NodeSeq)(implicit xhtml : NodeSeq) : Seq[BindParam] = {
+        createField(parentName, name, validations.is(name), invalidClass, field)(xhtml)
+    }
+
     class Validations[T]
     extends RequestVar[HashMap[String, Boolean]] (
         new HashMap[String, Boolean] {

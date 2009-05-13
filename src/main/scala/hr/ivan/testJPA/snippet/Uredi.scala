@@ -57,8 +57,7 @@ class Uredi extends SimpleSifarnik[Ured](new Ured) {
 
         def bindLista = Nil +
         ("id" -> SHtml.hidden(() => entityVar(current))) ++
-        createField("ured", "naziv",
-                    validation.is("naziv"), Some("validationError"),
+        createField("ured", "naziv", validation, Some("validationError"),
                     SHtml.text(entity.naziv, entity.naziv = _)) ++
         createField("ured", "uredNadredjeni", true, None,
                     SHtml.select(choicesUred, selectedUredId, doUredSelect)) +
