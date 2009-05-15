@@ -18,21 +18,12 @@ import EntityUtil._
 import PageUtil._
 import Model._
 
-class Naselja extends SimpleSifarnik[Naselje](new Naselje) {
+class Naselja extends SimpleSifarnik[Naselje] {
 
-    def pager(xhtml : NodeSeq) : NodeSeq = {
-        println ("creating pager...................")
-        List(1).flatMap(x =>
-            bind("page", xhtml,
-                 "first" -> SHtml.link("a", () => {println("first")}, Text("aaaaad")),
-                 "previous" -> SHtml.link("aa", () => {println("orevious")}, chooseTemplate("page", "previous", xhtml)),
-                 "next" -> SHtml.link("aaa", () => {println("next")}, chooseTemplate("page", "next", xhtml)),
-                 "last" -> SHtml.link("aaaa", () => {println("last")}, chooseTemplate("page", "last", xhtml)),
-            ))
-    }
+    def newT = new Naselje
 
-    def liiink(xhtml : NodeSeq) : NodeSeq = SHtml.link("", () => {println("aaaaaaaaaaaaaa")}, Text("aaaaaaaaaaad"))
-    
+    //override def pager(xhtml : NodeSeq) = super.pager(xhtml)
+
     def list (implicit xhtml : NodeSeq) : NodeSeq = {
 
         def doAfterDelete(success : Boolean, obj : Option[Naselje]) = success match {

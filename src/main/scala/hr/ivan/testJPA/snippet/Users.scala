@@ -17,7 +17,9 @@ import EntityUtil._
 import PageUtil._
 import Model._
 
-class Users extends SimpleSifarnik[User](new User) {
+class Users extends SimpleSifarnik[User] {
+
+    def newT = new User
 
     def list (xhtml : NodeSeq) : NodeSeq = {
         val users = Model.createNamedQuery[User]("findAllUsers") getResultList()

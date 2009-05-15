@@ -8,7 +8,9 @@ import S._
 import util._
 import Helpers._
 
-class SimpleSifarnik[T](newT : => T) {
+trait SimpleSifarnik[T] {
+
+    def newT : T
 
     var pageSize : Int = 10
     var first : Int = 0
@@ -24,6 +26,14 @@ class SimpleSifarnik[T](newT : => T) {
         case false => notice("Entitet nije obrisan!")
     }
 
-
+    def pager(xhtml : NodeSeq) : NodeSeq = {
+        println ("creating pager...................")
+        bind("page", xhtml,
+             "first" -> SHtml.link("", () => {println("first")}, chooseTemplate("page", "first", xhtml)),
+             "previous" -> SHtml.link("", () => {println("previous")}, chooseTemplate("page", "previous", xhtml)),
+             "next" -> SHtml.link("", () => {println("next")}, chooseTemplate("page", "next", xhtml)),
+             "last" -> SHtml.link("", () => {println("last")}, chooseTemplate("page", "last", xhtml)),
+        )
+    }
 
 }

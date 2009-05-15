@@ -17,7 +17,9 @@ import EntityUtil._
 import PageUtil._
 import Model._
 
-class Uredi extends SimpleSifarnik[Ured](new Ured) {
+class Uredi extends SimpleSifarnik[Ured] {
+
+    def newT = new Ured
 
     def list (implicit xhtml : NodeSeq) : NodeSeq = {
         createList[Ured](UredDAO.allUredi, "ured",
