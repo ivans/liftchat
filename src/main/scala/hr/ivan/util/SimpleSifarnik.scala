@@ -8,31 +8,66 @@ import S._
 import util._
 import Helpers._
 
-trait SimpleSifarnik[T] {
+trait SimpleSifarnik[T] extends StatefulSnippet {
 
-    def newT : T
+    def newInstance : T
 
-    var pageSize : Int = 10
-    var first : Int = 0
-
-    object entityVar extends RequestVar(newT)
+    object entityVar extends RequestVar(newInstance)
     def entity = entityVar.is
-
-    def getList() : List[T] = Nil
-    def getListCount() : Int = 0
 
     def doAfterDelete(success : Boolean, obj : Option[T]) = success match {
         case true => notice("Entitet " + obj.getOrElse(null) + " je uspješno obrisan!")
         case false => notice("Entitet nije obrisan!")
     }
 
+    /** Stvari vezane uz pager
+     */
+    def fetchEntityList() : Seq[T] = Nil
+    def fetchEntityListCount() : Option[Int] = None
+
+    object entityList extends RequestVar(fetchEntityList())
+    object entityListCount extends RequestVar[Option[Int]](fetchEntityListCount())
+
+    def pageSize = pageSize_
+    def first = first_
+
+    var pageSize_ = 10
+    var first_ = 0
+
     def pager(xhtml : NodeSeq) : NodeSeq = {
-        println ("creating pager...................")
+        println ("creating pager. first = " + first_ + ", pageSize = " + pageSize_)
+
+        def actionFirst = {
+            first_ = 0
+            println("actionFirst: first = " + first_)
+        }
+
+        def actionPrevious = {
+            first_ = first_ - pageSize_
+            if(first_ < 0) first_ = 0
+            println("actionPrevious: first = " + first_)
+        }
+
+        def actionNext = {
+            println("actionNext: first = " + first_ + " pageSize = " + pageSize_)
+            first_ = first_ + pageSize_
+            println("actionNext: first = " + first_)
+        }
+
+        def actionLast = {
+            first_ = (entityListCount.is.get / pageSize) * pageSize
+            println("actionLast: first = " + first_)
+        }
+
         bind("page", xhtml,
-             "first" -> SHtml.link("", () => {println("first")}, chooseTemplate("page", "first", xhtml)),
-             "previous" -> SHtml.link("", () => {println("previous")}, chooseTemplate("page", "previous", xhtml)),
-             "next" -> SHtml.link("", () => {println("next")}, chooseTemplate("page", "next", xhtml)),
-             "last" -> SHtml.link("", () => {println("last")}, chooseTemplate("page", "last", xhtml)),
+             "first" -> this.link("", () => {actionFirst}, chooseTemplate("page", "first", xhtml)),
+             "previous" -> this.link("", () => {actionPrevious}, chooseTemplate("page", "previous", xhtml)),
+             "next" -> this.link("", () => {actionNext}, chooseTemplate("page", "next", xhtml)),
+             "last" -> (entityListCount.is match {
+                    case Some(x) => this.link("", () => {actionLast}, chooseTemplate("page", "last", xhtml))
+                    case None => chooseTemplate("page", "last", xhtml)
+                }),
+             "current" -> Text((first / pageSize).toString)
         )
     }
 

@@ -1,6 +1,18 @@
 <lift:surround with="default" at="content">
     <head><title><lift:loc>Naselja</lift:loc></title></head>
 
+    <table style="margin-bottom: 0px">
+        <tr>
+            <lift:naselja.pager>
+                <td><page:first>&lt;&lt;First</page:first></td>
+                <td><page:previous>&lt;Previous</page:previous></td>
+                <td><page:current /></td>
+                <td><page:next>Next&gt;</page:next></td>
+                <td><page:last>Last&gt;&gt;</page:last></td>
+            </lift:naselja.pager>
+        </tr>
+    </table>
+
     <table>
         <tr>
             <th><lift:loc>Naziv</lift:loc></th>
@@ -10,7 +22,7 @@
             <th></th>
             <th></th>
         </tr>
-        <lift:Naselja.list>
+        <lift:naselja.list>
             <tr>
                 <td><naselje:naziv /></td>
                 <td><naselje:sifra /></td>
@@ -19,16 +31,7 @@
                 <td><naselje:edit /></td>
                 <td><naselje:delete /></td>
             </tr>
-        </lift:Naselja.list>
+        </lift:naselja.list>
     </table>
-    <lift:naselja.pager>
-        Pager
-        <ul>
-        <li><page:first>Fi<b>r</b>st</page:first></li>
-        <li><page:previous>Previous</page:previous></li>
-        <li><page:next>Next</page:next></li>
-        <li><page:last>Last</page:last></li>
-        </ul>
-    </lift:naselja.pager>
 
 </lift:surround>

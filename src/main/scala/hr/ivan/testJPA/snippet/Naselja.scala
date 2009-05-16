@@ -20,9 +20,18 @@ import Model._
 
 class Naselja extends SimpleSifarnik[Naselje] {
 
-    def newT = new Naselje
+    println("::: Creating new instance of snippet Naselja")
 
-    //override def pager(xhtml : NodeSeq) = super.pager(xhtml)
+    def newInstance = new Naselje
+
+    val dispatch: DispatchIt = {
+        case "list" => println("::: dispatch to list"); list(_)
+        case "add" => println("::: dispatch to add"); add(_)
+        case "pager" => println("::: dispatch to pager"); pager(_)
+    }
+
+    override def fetchEntityList = NaseljeDAO.allNaseljaPaged(first, pageSize)
+    override def fetchEntityListCount = Some(NaseljeDAO.allNaselja.size)
 
     def list (implicit xhtml : NodeSeq) : NodeSeq = {
 
@@ -31,7 +40,9 @@ class Naselja extends SimpleSifarnik[Naselje] {
             case false => notice("Naselje nije obrisana")
         }
 
-        createList[Naselje](NaseljeDAO.allNaseljaPaged(first, pageSize), "naselje",
+        println("::: Creating list, first = " + first + " pageSize = " + pageSize)
+
+        createList[Naselje](entityList.get, "naselje",
                             n => {
                 "naziv" -> outputText(n.naziv) ::
                 "sifra" -> outputText(n.sifra) ::

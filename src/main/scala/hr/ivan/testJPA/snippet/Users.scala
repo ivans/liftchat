@@ -19,7 +19,14 @@ import Model._
 
 class Users extends SimpleSifarnik[User] {
 
-    def newT = new User
+    def newInstance = new User
+    
+    val dispatch: DispatchIt = {
+        case "list" => println("dispatch to list"); list(_)
+        case "add" => println("dispatch to add"); add(_)
+        case "pager" => println("dispatch to pager"); pager(_)
+        case s : String => println("dispatch to " + s); list(_)
+    }
 
     def list (xhtml : NodeSeq) : NodeSeq = {
         val users = Model.createNamedQuery[User]("findAllUsers") getResultList()

@@ -19,7 +19,15 @@ import Model._
 
 class Uredi extends SimpleSifarnik[Ured] {
 
-    def newT = new Ured
+    def newInstance = new Ured
+
+    val dispatch: DispatchIt = {
+        case "list" => println("dispatch to list"); list(_)
+        case "add" => println("dispatch to add"); add(_)
+        case "pager" => println("dispatch to pager"); pager(_)
+        case s : String => println("dispatch to " + s); list(_)
+    }
+
 
     def list (implicit xhtml : NodeSeq) : NodeSeq = {
         createList[Ured](UredDAO.allUredi, "ured",

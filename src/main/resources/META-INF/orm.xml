@@ -59,7 +59,7 @@
 
     <entity class="Naselje">
         <named-query name="findAllNaselja">
-            <query><![CDATA[from Naselje n]]>
+            <query><![CDATA[from Naselje n order by n.naziv]]>
             </query>
         </named-query>
         <named-query name="findAllNaseljaAktivna">
