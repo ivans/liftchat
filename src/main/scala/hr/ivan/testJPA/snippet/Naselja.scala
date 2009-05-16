@@ -31,7 +31,7 @@ class Naselja extends SimpleSifarnik[Naselje] {
     }
 
     override def fetchEntityList = NaseljeDAO.allNaseljaPaged(first, pageSize)
-    override def fetchEntityListCount = Some(NaseljeDAO.allNaselja.size)
+    override def fetchEntityListCount = Some(NaseljeDAO.allNaseljaCount.toInt)
 
     def list (implicit xhtml : NodeSeq) : NodeSeq = {
 
@@ -78,7 +78,7 @@ class Naselja extends SimpleSifarnik[Naselje] {
         createField("naselje", "sifra", validation, Some("validationError"),
                     SHtml.text(entity.sifra, entity.sifra = _)) ++
         createField("naselje", "mbr", true, None,
-                    SHtml.text(entity.mbr, entity.mbr = _)) ++
+                    SHtml.text(safeGet(entity.mbr, ""), entity.mbr = _)) ++
         createField("naselje", "aktivan", true, None,
                     SHtml.checkbox(entity.aktivan.getOrElse(false), entity.aktivan = _)) +
         ("submit" -> SHtml.submit(?("Save"), doAdd))

@@ -14,4 +14,8 @@ class GenericDAO[T] {
         query.getResultList
     }
 
+    def getSingleResultFromNamedQuery[SRT](namedQuery : String)(implicit model : LocalEMF with RequestVarEM) : SRT = {
+        val query = model.createNamedQuery[T](namedQuery)
+        query.getSingleResult.asInstanceOf[SRT]
+    }
 }

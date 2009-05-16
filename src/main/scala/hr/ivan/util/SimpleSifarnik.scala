@@ -31,8 +31,8 @@ trait SimpleSifarnik[T] extends StatefulSnippet {
     def pageSize = pageSize_
     def first = first_
 
-    var pageSize_ = 10
-    var first_ = 0
+    var pageSize_ : Int = 10
+    var first_ : Int = 0
 
     def pager(xhtml : NodeSeq) : NodeSeq = {
         println ("creating pager. first = " + first_ + ", pageSize = " + pageSize_)
@@ -51,11 +51,14 @@ trait SimpleSifarnik[T] extends StatefulSnippet {
         def actionNext = {
             println("actionNext: first = " + first_ + " pageSize = " + pageSize_)
             first_ = first_ + pageSize_
+            if(first_ > lastFirst) first_ = lastFirst
             println("actionNext: first = " + first_)
         }
 
+        def lastFirst = (entityListCount.is.get / pageSize) * pageSize
+
         def actionLast = {
-            first_ = (entityListCount.is.get / pageSize) * pageSize
+            first_ = lastFirst
             println("actionLast: first = " + first_)
         }
 
@@ -67,7 +70,11 @@ trait SimpleSifarnik[T] extends StatefulSnippet {
                     case Some(x) => this.link("", () => {actionLast}, chooseTemplate("page", "last", xhtml))
                     case None => chooseTemplate("page", "last", xhtml)
                 }),
-             "current" -> Text((first / pageSize).toString)
+             "current" -> Text((first / pageSize).toString),
+             "count" ->  (entityListCount.is match {
+                    case Some(x) => Text(x.toString)
+                    case None => Text("?")
+                })
         )
     }
 

@@ -62,6 +62,10 @@
             <query><![CDATA[from Naselje n order by n.naziv]]>
             </query>
         </named-query>
+        <named-query name="findAllNaseljaCount">
+            <query><![CDATA[select count(n.id) from Naselje n]]>
+            </query>
+        </named-query>
         <named-query name="findAllNaseljaAktivna">
             <query><![CDATA[from Naselje n where n._aktivan = 1]]>
             </query>

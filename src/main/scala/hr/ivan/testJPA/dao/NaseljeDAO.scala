@@ -11,6 +11,8 @@ object NaseljeDAO extends GenericDAO[Naselje] {
 
     def allNaselja = getListFromNamedQuery("findAllNaselja")
 
+    def allNaseljaCount = getSingleResultFromNamedQuery[Long]("findAllNaseljaCount")
+
     def allNaseljaPaged(first : Int, count : Int) = getListFromNamedQuery("findAllNaselja", first, count)
 
 }
