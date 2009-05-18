@@ -62,8 +62,24 @@
             <query><![CDATA[from Naselje n order by n.naziv]]>
             </query>
         </named-query>
+        <named-query name="findNaseljaByNaziv">
+            <query><![CDATA[
+            from Naselje n
+            where upper(n.naziv) like concat(concat('%',upper(:naziv)),'%')
+            order by n.naziv
+            ]]>
+            </query>
+        </named-query>
         <named-query name="findAllNaseljaCount">
             <query><![CDATA[select count(n.id) from Naselje n]]>
+            </query>
+        </named-query>
+        <named-query name="findNaseljaCountByNaziv">
+            <query><![CDATA[
+            select count(n.id) from Naselje n
+            where upper(n.naziv) like concat(concat('%',upper(:naziv)),'%')
+            order by n.naziv
+            ]]>
             </query>
         </named-query>
         <named-query name="findAllNaseljaAktivna">

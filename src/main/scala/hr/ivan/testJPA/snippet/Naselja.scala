@@ -28,20 +28,14 @@ class Naselja extends SimpleSifarnik[Naselje] {
         case "list" => println("::: dispatch to list"); list(_)
         case "add" => println("::: dispatch to add"); add(_)
         case "pager" => println("::: dispatch to pager"); pager(_)
+        case "search" => println("::: dispatch to search"); search(_)
+        case "searchString" => searchString(_)
     }
 
-    override def fetchEntityList = NaseljeDAO.allNaseljaPaged(first, pageSize)
-    override def fetchEntityListCount = Some(NaseljeDAO.allNaseljaCount.toInt)
+    override def fetchEntityList = NaseljeDAO.findNaseljaByNaziv(first, pageSize, searchNaziv)
+    override def fetchEntityListCount = Some(NaseljeDAO.naseljaCountByNaziv(searchNaziv).toInt)
 
     def list (implicit xhtml : NodeSeq) : NodeSeq = {
-
-        def doAfterDelete(success : Boolean, obj : Option[Naselje]) = success match {
-            case true => notice("Naselje " + obj.map(_.naziv).getOrElse("??") + " je obrisano")
-            case false => notice("Naselje nije obrisana")
-        }
-
-        println("::: Creating list, first = " + first + " pageSize = " + pageSize)
-
         createList[Naselje](entityList.get, "naselje",
                             n => {
                 "naziv" -> outputText(n.naziv) ::
@@ -85,4 +79,17 @@ class Naselja extends SimpleSifarnik[Naselje] {
 
         bind("naselje", xhtml, bindLista:_*)
     }
+
+    /** Search dio
+     */
+    var searchNaziv = ""
+
+    def search(xhtml : NodeSeq) : NodeSeq = {
+        bind("s", xhtml,
+             "naziv" -> SHtml.text(searchNaziv, searchNaziv = _),
+             "submit" -> SHtml.submit(?("Traži"), () => {})
+        )
+    }
+
+    def searchString(xhtml : NodeSeq) = Text(searchNaziv)
 }

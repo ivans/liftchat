@@ -1,6 +1,13 @@
 <lift:surround with="default" at="content">
     <head><title><lift:loc>Naselja</lift:loc></title></head>
 
+    Search string: <lift:naselja.searchString/>
+
+    <lift:naselja.search form="POST">
+        <s:naziv></s:naziv>
+        <s:submit></s:submit>
+    </lift:naselja.search>
+
     <table style="margin-bottom: 0px">
         <tr>
             <lift:naselja.pager>

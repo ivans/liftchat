@@ -51,7 +51,7 @@ trait SimpleSifarnik[T] extends StatefulSnippet {
         def actionNext = {
             println("actionNext: first = " + first_ + " pageSize = " + pageSize_)
             first_ = first_ + pageSize_
-            if(first_ > lastFirst) first_ = lastFirst
+            if(first_ >= lastFirst) first_ = lastFirst
             println("actionNext: first = " + first_)
         }
 
