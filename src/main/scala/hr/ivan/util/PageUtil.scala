@@ -1,6 +1,6 @@
 package hr.ivan.util
 
-import scala.xml.{NodeSeq,Text}
+import scala.xml.{NodeSeq, Text, Elem}
 import scala.collection.mutable.HashMap
 import org.scala_libs.jpa._
 
@@ -130,13 +130,17 @@ object PageUtil {
     def createErrorNotification(name : String, invalidClass : Option[String], message : String) =
     error(name + "Msg", <span class={invalidClass.getOrElse("invalid")}>{message}</span>)
 
+    type LinkFuncType = (String, ()=>Any, NodeSeq) => NodeSeq
+    /* TODO kad scala dobije defaultne vrijednosti ovo postaje SHtml.link
+     */
     def deleteLink[T <: AnyRef](clazz : Class[T],
                                 id : Long,
                                 dest : String,
                                 link : NodeSeq,
                                 postDelete : Option[(Boolean, Option[T]) => Any],
-                                model : LocalEMF with RequestVarEM) = {
-        SHtml.link(dest, () => {
+                                model : LocalEMF with RequestVarEM,
+                                linkGenerator : LinkFuncType) = {
+        linkGenerator(dest, () => {
                 var success = false
                 var obj : Option[T] = None
                 try {

@@ -13,14 +13,16 @@ import javax.persistence.{Entity, EntityExistsException,PersistenceException}
 
 import hr.ivan.testJPA.model._
 import hr.ivan.testJPA.dao._
-import hr.ivan.util.{PageUtil, EntityUtil}
+import hr.ivan.util.{PageUtil, EntityUtil, SimpleSifarnik}
 import EntityUtil._
 import PageUtil._
 import Model._
 
-class Role {
+class Role extends SimpleSifarnik[Rola] {
 
-    def list (implicit xhtml : NodeSeq) : NodeSeq = {
+    def newInstance = new Rola
+
+    override def list (implicit xhtml : NodeSeq) : NodeSeq = {
 
         def doAfterDelete(success : Boolean, obj : Option[Rola]) = success match {
             case true => notice("Rola " + obj.map(_.naziv).getOrElse("??") + " je obrisana")
@@ -31,19 +33,16 @@ class Role {
                          r => {
                 "naziv" -> outputText(r.naziv) ::
                 "aktivan" -> SHtml.checkbox(r.aktivan.getOrElse(false), _ => Nil, ("disabled" -> "true")) ::
-                "edit" -> SHtml.link("/pages/role/addEdit", () => rolaVar(r), Text(?("Edit"))) ::
-                "delete" -> deleteLink(classOf[Rola], r.id, "/pages/role/list", Text(?("Delete")), Some(doAfterDelete _), Model) ::
+                "edit" -> SHtml.link("/pages/role/addEdit", () => entityVar(r), Text(?("Edit"))) ::
+                "delete" -> deleteLink(classOf[Rola], r.id, "/pages/role/list", Text(?("Delete")), Some(doAfterDelete _), Model, statelessLink) ::
                 Nil
             }
         )
     }
 
-    object rolaVar extends RequestVar(new Rola())
-    def rola = rolaVar.is
+    override def add (implicit xhtml : NodeSeq) : NodeSeq = {
 
-    def add (implicit xhtml : NodeSeq) : NodeSeq = {
-
-        val current = rola
+        val current = entity
 
         object validation extends Validations[Rola] {
             addValidator("naziv", _.naziv.length != 0, Some("Naziv ne može biti prazan"))
@@ -51,18 +50,18 @@ class Role {
         }
 
         def doAdd () = {
-            if(validation.doValidation(rola) == true) {
-                trySavingEntity[Rola](rola, Some("Nova rola dodana"), Some("Updatana rola"))(Model)
+            if(validation.doValidation(entity) == true) {
+                trySavingEntity[Rola](entity, Some("Nova rola dodana"), Some("Updatana rola"))(Model)
                 redirectTo("/pages/role/list")
             }
         }
 
         def bindLista = Nil +
-        ("id" -> SHtml.hidden(() => rolaVar(current))) ++
+        ("id" -> SHtml.hidden(() => entityVar(current))) ++
         createField("rola", "naziv", validation, Some("validationError"),
-                    SHtml.text(rola.naziv, rola.naziv = _) % ("id" -> "naziv")) ++
+                    SHtml.text(entity.naziv, entity.naziv = _) % ("id" -> "naziv")) ++
         createField("rola", "aktivan", true, None,
-                    SHtml.checkbox(rola.aktivan.getOrElse(false), rola.aktivan = _)) +
+                    SHtml.checkbox(entity.aktivan.getOrElse(false), entity.aktivan = _)) +
         ("submit" -> SHtml.submit(?("Save"), doAdd))
 
         bind("rola", xhtml, bindLista:_*)

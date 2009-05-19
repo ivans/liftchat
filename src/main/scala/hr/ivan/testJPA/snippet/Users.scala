@@ -33,7 +33,7 @@ class Users extends SimpleSifarnik[User] {
                         bind("rola", chooseTemplate("user", "listRole", xhtml),
                              "naziv" -> rk.rola.naziv)
                     ),
-                     "delete" -> deleteLink(classOf[User], user.id, "/pages/sifarnici/users/users", Text(?("Delete")), Some(doAfterDelete _), Model),
+                     "delete" -> deleteLink(classOf[User], user.id, "/pages/sifarnici/users/users", Text(?("Delete")), Some(doAfterDelete _), Model, statelessLink),
                 )
             }
         )

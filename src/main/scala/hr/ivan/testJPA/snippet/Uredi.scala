@@ -28,7 +28,7 @@ class Uredi extends SimpleSifarnik[Ured] {
                 "uredNadredjeni" -> outputText(u.uredNadredjeni.naziv) ::
                 "brojUsera" -> outputText(u.useri.size.toString) ::
                 "edit" -> SHtml.link("/pages/sifarnici/uredi/uredi", () => entityVar(u), Text(?("Edit"))) ::
-                "delete" -> deleteLink(classOf[Ured], u.id, "/pages/sifarnici/uredi/uredi", Text(?("Delete")), Some(doAfterDelete _), Model) ::
+                "delete" -> deleteLink(classOf[Ured], u.id, "/pages/sifarnici/uredi/uredi", Text(?("Delete")), Some(doAfterDelete _), Model, statelessLink) ::
                 Nil
             }
         )

@@ -1,6 +1,6 @@
 package hr.ivan.util
 
-import scala.xml.{NodeSeq,Text}
+import scala.xml.{NodeSeq, Text, Elem}
 
 import _root_.net.liftweb._
 import http._
@@ -66,26 +66,48 @@ trait SimpleSifarnik[T] extends StatefulSnippet {
         def actionNext = {
             println("actionNext: first = " + first_ + " pageSize = " + pageSize_)
             first_ = first_ + pageSize_
-            if(first_ >= lastFirst) first_ = lastFirst
             println("actionNext: first = " + first_)
         }
-
-        def lastFirst = (entityListCount.is.get / pageSize) * pageSize
 
         def actionLast = {
             first_ = lastFirst
             println("actionLast: first = " + first_)
         }
 
+        def lastPage = entityListCount.is.get / pageSize - 1
+        def currentPage = first / pageSize
+        def lastFirst = lastPage * pageSize
+        def onLastPage_? = lastPage == currentPage
+        def onFirstPage_? = first < pageSize
+        def onlyOnePage_? : Boolean = entityListCount.is match {
+            case Some(x) => x <= pageSize
+            case None => true
+        }
+
+        // ako smo iza zadnjeg odi stranicu manje
+        while(first >= entityListCount.is.get) {
+            first_ = first_ - pageSize
+        }
+
         bind("page", xhtml,
-             "first" -> this.link("", () => {actionFirst}, chooseTemplate("page", "first", xhtml)),
-             "previous" -> this.link("", () => {actionPrevious}, chooseTemplate("page", "previous", xhtml)),
-             "next" -> this.link("", () => {actionNext}, chooseTemplate("page", "next", xhtml)),
-             "last" -> (entityListCount.is match {
-                    case Some(x) => this.link("", () => {actionLast}, chooseTemplate("page", "last", xhtml))
-                    case None => chooseTemplate("page", "last", xhtml)
+             "first" -> ((onlyOnePage_? || onFirstPage_?) match {
+                    case true => chooseTemplate("page", "first", xhtml)
+                    case false => this.link("", () => {actionFirst}, chooseTemplate("page", "first", xhtml))
                 }),
-             "current" -> Text((first / pageSize).toString),
+             "previous" -> ((onlyOnePage_? || onFirstPage_?) match {
+                    case true => chooseTemplate("page", "previous", xhtml)
+                    case false => this.link("", () => {actionPrevious}, chooseTemplate("page", "previous", xhtml))
+                }),
+             "next" -> ((onlyOnePage_? || onLastPage_?) match {
+                    case true => chooseTemplate("page", "next", xhtml)
+                    case false => this.link("", () => {actionNext}, chooseTemplate("page", "next", xhtml))
+                }),
+             "last" -> ((onlyOnePage_? || onLastPage_?) match {
+                    case true => chooseTemplate("page", "last", xhtml)
+                    case false => this.link("", () => {actionLast}, chooseTemplate("page", "last", xhtml))
+                }),
+             "currentPage" -> Text(currentPage.toString),
+             "currentFirst" -> Text(first.toString),
              "count" ->  (entityListCount.is match {
                     case Some(x) => Text(x.toString)
                     case None => Text("?")
@@ -93,4 +115,8 @@ trait SimpleSifarnik[T] extends StatefulSnippet {
         )
     }
 
+    /* Linkovi
+     */
+    def statelessLink(to : String, func : ()=>Any, body : NodeSeq) : NodeSeq = SHtml.link(to, func, body)
+    def statefullLink(to : String, func : ()=>Any, body : NodeSeq) : NodeSeq = this.link(to, func, body)
 }
