@@ -20,6 +20,21 @@ trait SimpleSifarnik[T] extends StatefulSnippet {
         case false => notice("Entitet nije obrisan!")
     }
 
+    /** Basic dispatch dispatches to list, add, pager and search methods
+     */
+    def dispatch: DispatchIt = {
+        case "list" => println("::: dispatch to list"); list(_)
+        case "add" => println("::: dispatch to add"); add(_)
+        case "pager" => println("::: dispatch to pager"); pager(_)
+        case "search" => println("::: dispatch to search"); search(_)
+    }
+
+    /** Osnovne metode (list, add...)
+     */
+    def list (implicit xhtml : NodeSeq) : NodeSeq = Nil
+    def add (implicit xhtml : NodeSeq) : NodeSeq = Nil
+    def search(implicit xhtml : NodeSeq) : NodeSeq = Nil
+
     /** Stvari vezane uz pager
      */
     def fetchEntityList() : Seq[T] = Nil

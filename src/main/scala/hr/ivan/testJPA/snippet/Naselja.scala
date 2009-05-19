@@ -24,18 +24,15 @@ class Naselja extends SimpleSifarnik[Naselje] {
 
     def newInstance = new Naselje
 
-    val dispatch: DispatchIt = {
-        case "list" => println("::: dispatch to list"); list(_)
-        case "add" => println("::: dispatch to add"); add(_)
-        case "pager" => println("::: dispatch to pager"); pager(_)
-        case "search" => println("::: dispatch to search"); search(_)
+    override def dispatch : DispatchIt =  {
         case "searchString" => searchString(_)
+        case other => super.dispatch(other)
     }
 
     override def fetchEntityList = NaseljeDAO.findNaseljaByNaziv(first, pageSize, searchNaziv)
     override def fetchEntityListCount = Some(NaseljeDAO.naseljaCountByNaziv(searchNaziv).toInt)
 
-    def list (implicit xhtml : NodeSeq) : NodeSeq = {
+    override def list (implicit xhtml : NodeSeq) : NodeSeq = {
         createList[Naselje](entityList.get, "naselje",
                             n => {
                 "naziv" -> outputText(n.naziv) ::
@@ -49,7 +46,7 @@ class Naselja extends SimpleSifarnik[Naselje] {
         )
     }
 
-    def add (implicit xhtml : NodeSeq) : NodeSeq = {
+    override def add (implicit xhtml : NodeSeq) : NodeSeq = {
 
         val current = entity
 
@@ -83,13 +80,13 @@ class Naselja extends SimpleSifarnik[Naselje] {
     /** Search dio
      */
     var searchNaziv = ""
+    def searchString(xhtml : NodeSeq) = Text(searchNaziv)
 
-    def search(xhtml : NodeSeq) : NodeSeq = {
+    override def search(implicit xhtml : NodeSeq) : NodeSeq = {
         bind("s", xhtml,
              "naziv" -> SHtml.text(searchNaziv, searchNaziv = _),
              "submit" -> SHtml.submit(?("Traži"), () => {})
         )
     }
 
-    def searchString(xhtml : NodeSeq) = Text(searchNaziv)
 }

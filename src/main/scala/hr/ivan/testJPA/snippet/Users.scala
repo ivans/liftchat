@@ -21,14 +21,7 @@ class Users extends SimpleSifarnik[User] {
 
     def newInstance = new User
     
-    val dispatch: DispatchIt = {
-        case "list" => println("dispatch to list"); list(_)
-        case "add" => println("dispatch to add"); add(_)
-        case "pager" => println("dispatch to pager"); pager(_)
-        case s : String => println("dispatch to " + s); list(_)
-    }
-
-    def list (xhtml : NodeSeq) : NodeSeq = {
+    override def list (implicit xhtml : NodeSeq) : NodeSeq = {
         val users = Model.createNamedQuery[User]("findAllUsers") getResultList()
         users.flatMap(user => {
                 bind("user", xhtml,
@@ -46,7 +39,7 @@ class Users extends SimpleSifarnik[User] {
         )
     }
 
-    def add (implicit xhtml : NodeSeq) : NodeSeq = {
+    override def add (implicit xhtml : NodeSeq) : NodeSeq = {
 
         object validation extends Validations[User] {
             addValidator("lastName", _.lastName.length != 0, Some("The users last name cannot be blank"))
