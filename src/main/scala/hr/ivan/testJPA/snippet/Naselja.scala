@@ -47,12 +47,11 @@ class Naselja extends SimpleSifarnik[Naselje] {
     override def add (implicit xhtml : NodeSeq) : NodeSeq = {
 
         def doAdd () = {
-
             validation << ("naziv", _.naziv.length != 0, Some("Naziv ne može biti prazan"))
             validation << ("sifra", _.sifra.length != 0, Some("Šifra ne može biti prazan"))
 
             validation.valid_?(entity) {
-                trySavingEntity[Naselje](entity, Some("Novo naselje dodano"), Some("Spremljene promjene"))(Model)
+                trySavingEntity(entity, Some("Novo naselje dodano"), Some("Spremljene promjene"))(Model)
                 redirectTo("/pages/sifarnici/naselja/naseljaList")
             }
         }

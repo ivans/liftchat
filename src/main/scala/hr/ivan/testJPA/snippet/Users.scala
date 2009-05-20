@@ -27,6 +27,7 @@ class Users extends SimpleSifarnik[User] {
                 bind("user", xhtml,
                      "firstName" -> outputText(user.firstName),
                      "lastName" -> outputText(user.lastName),
+                     "dob" -> outputDate(user.dateOfBirth),
                      "ured" -> outputText(user.ured.naziv),
                      "edit" -> SHtml.link("/pages/sifarnici/users/users", () => entityVar(user), Text(?("Edit"))),
                      "listRole" -> user.listRoleUsera.flatMap(rk =>
@@ -38,6 +39,8 @@ class Users extends SimpleSifarnik[User] {
             }
         )
     }
+
+    implicit val formatter = new java.text.SimpleDateFormat("yyyy-MM-dd")
 
     override def add (implicit xhtml : NodeSeq) : NodeSeq = {
 
@@ -67,6 +70,7 @@ class Users extends SimpleSifarnik[User] {
         ("id" -> SHtml.hidden(() => entityVar(currentUser))) ++
         createField("user", "firstName", true, None, SHtml.text(entity.firstName, entity.firstName = _)) ++
         createField("user", "lastName", validation, Some("validationError"), SHtml.text(entity.lastName, entity.lastName = _)) ++
+        createField("user", "dob", true, None, inputDate("dob", entity.dateOfBirth, entity.dateOfBirth = _)) ++
         createField("user", "ured", true, None,
                     SHtml.select(choicesUredi,  selectedUredId,
                                  uredId => {

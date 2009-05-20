@@ -1,5 +1,7 @@
 package hr.ivan.testJPA.model
 
+import java.util.Date
+
 import javax.persistence.{Entity, Id, Column, OneToMany, ManyToOne, Transient}
 import javax.persistence.{GeneratedValue, GenerationType, Table, EntityListeners}
 import javax.persistence.{CascadeType, FetchType}
@@ -17,6 +19,9 @@ class User extends PrimaryKeyId with AktivanDefaultTrue with RecordInfo {
 
     @Column{val nullable = false}
     var lastName : String = ""
+
+    @Column{val nullable = true, val name="DATE_OF_BIRTH"}
+    var dateOfBirth : Date = null
 
     @ManyToOne{val optional = true}
     var ured : Ured = _
