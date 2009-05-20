@@ -41,13 +41,11 @@ class Users extends SimpleSifarnik[User] {
 
     override def add (implicit xhtml : NodeSeq) : NodeSeq = {
 
-        object validation extends Validations[User] {
-            addValidator("lastName", _.lastName.length != 0, Some("The users last name cannot be blank"))
-            addValidator("listRole", _.listRoleUsera.size > 0, Some("Potrebno je odabrati bar jednu rolu"))
-        }
+        validation << ("lastName", _.lastName.length != 0, Some("The users last name cannot be blank"))
+        validation << ("listRole", _.listRoleUsera.size > 0, Some("Potrebno je odabrati bar jednu rolu"))
 
         def doAdd () = {
-            if(validation.doValidation(entity) == true) {
+            validation.valid_?(entity) {
                 trySavingEntity[User](entity, Some("Korisnik je uspješno dodan"), Some("Promjene na korsiniku su uspješno spremljene."))(Model)
                 redirectTo("/pages/sifarnici/users/users")
             }

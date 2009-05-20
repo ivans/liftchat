@@ -20,14 +20,12 @@ import Model._
 
 class Naselja extends SimpleSifarnik[Naselje] {
 
-    println("::: Creating new instance of snippet Naselja")
-
-    def newInstance = new Naselje
-
     override def dispatch : DispatchIt =  {
-        case "searchString" => searchString(_)
+        case "searchNaziv" => _ => Text(searchNaziv)
         case other => super.dispatch(other)
     }
+
+    def newInstance = new Naselje
 
     override def fetchEntityList = NaseljeDAO.findNaseljaByNaziv(first, pageSize, searchNaziv)
     override def fetchEntityListCount = Some(NaseljeDAO.naseljaCountByNaziv(searchNaziv).toInt)
@@ -48,22 +46,19 @@ class Naselja extends SimpleSifarnik[Naselje] {
 
     override def add (implicit xhtml : NodeSeq) : NodeSeq = {
 
-        val current = entity
-
-        object validation extends Validations[Naselje] {
-            addValidator("naziv", _.naziv.length != 0, Some("Naziv ne može biti prazan"))
-            addValidator("sifra", _.sifra.length != 0, Some("Šifra ne može biti prazan"))
-        }
-
         def doAdd () = {
-            if(validation.doValidation(entity) == true) {
+
+            validation << ("naziv", _.naziv.length != 0, Some("Naziv ne može biti prazan"))
+            validation << ("sifra", _.sifra.length != 0, Some("Šifra ne može biti prazan"))
+
+            validation.valid_?(entity) {
                 trySavingEntity[Naselje](entity, Some("Novo naselje dodano"), Some("Spremljene promjene"))(Model)
                 redirectTo("/pages/sifarnici/naselja/naseljaList")
             }
         }
 
         def bindLista = Nil +
-        ("id" -> SHtml.hidden(() => entityVar(current))) ++
+        ("id" -> SHtml.hidden(() => entityVar(entity))) ++
         createField("naselje", "naziv", validation, Some("validationError"),
                     SHtml.text(entity.naziv, entity.naziv = _)) ++
         createField("naselje", "sifra", validation, Some("validationError"),
@@ -80,7 +75,6 @@ class Naselja extends SimpleSifarnik[Naselje] {
     /** Search dio
      */
     var searchNaziv = ""
-    def searchString(xhtml : NodeSeq) = Text(searchNaziv)
 
     override def search(implicit xhtml : NodeSeq) : NodeSeq = {
         bind("s", xhtml,
