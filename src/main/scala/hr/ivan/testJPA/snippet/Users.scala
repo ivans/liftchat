@@ -27,6 +27,7 @@ class Users extends SimpleSifarnik[User] {
                 bind("user", xhtml,
                      "firstName" -> outputText(user.firstName),
                      "lastName" -> outputText(user.lastName),
+                     "dob" -> outputDate(user.dateOfBirth),
                      "ured" -> outputText(user.ured.naziv),
                      "edit" -> SHtml.link("/pages/sifarnici/users/users", () => entityVar(user), Text(?("Edit"))),
                      "listRole" -> user.listRoleUsera.flatMap(rk =>
@@ -39,15 +40,15 @@ class Users extends SimpleSifarnik[User] {
         )
     }
 
+    implicit val formatter = new java.text.SimpleDateFormat("yyyy-MM-dd")
+
     override def add (implicit xhtml : NodeSeq) : NodeSeq = {
 
-        object validation extends Validations[User] {
-            addValidator("lastName", _.lastName.length != 0, Some("The users last name cannot be blank"))
-            addValidator("listRole", _.listRoleUsera.size > 0, Some("Potrebno je odabrati bar jednu rolu"))
-        }
+        validation << ("lastName", _.lastName.length != 0, Some("The users last name cannot be blank"))
+        validation << ("listRole", _.listRoleUsera.size > 0, Some("Potrebno je odabrati bar jednu rolu"))
 
         def doAdd () = {
-            if(validation.doValidation(entity) == true) {
+            validation.valid_?(entity) {
                 trySavingEntity[User](entity, Some("Korisnik je uspješno dodan"), Some("Promjene na korsiniku su uspješno spremljene."))(Model)
                 redirectTo("/pages/sifarnici/users/users")
             }
@@ -69,6 +70,7 @@ class Users extends SimpleSifarnik[User] {
         ("id" -> SHtml.hidden(() => entityVar(currentUser))) ++
         createField("user", "firstName", true, None, SHtml.text(entity.firstName, entity.firstName = _)) ++
         createField("user", "lastName", validation, Some("validationError"), SHtml.text(entity.lastName, entity.lastName = _)) ++
+        createField("user", "dob", true, None, inputDate("dob", entity.dateOfBirth, entity.dateOfBirth = _)) ++
         createField("user", "ured", true, None,
                     SHtml.select(choicesUredi,  selectedUredId,
                                  uredId => {

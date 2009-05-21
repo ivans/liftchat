@@ -14,6 +14,7 @@ import Helpers._
 import hr.ivan.util.EntityUtil._
 
 import javax.persistence.{EntityExistsException,PersistenceException}
+import java.util.Date
 
 object PageUtil {
 
@@ -41,6 +42,29 @@ object PageUtil {
 
     def outputText(text : => String) : Text = {
         Text(safeGet(text, ""))
+    }
+
+    def outputDate(date : => Date)(implicit formatter : java.text.SimpleDateFormat) : Text = {
+        Text(safeGet(formatter.format(date), ""))
+    }
+    
+    def inputText(id : String, value : String, setter : (String) => Any) : NodeSeq = {
+        SHtml.text(value, setter(_)) % ("id" -> id)
+    }
+
+    def inputDate(id : String, value : Date, setter : (Date) => Any)
+    (implicit formatter : java.text.SimpleDateFormat) : NodeSeq = {
+        val strValue = if(value != null) formatter.format(value) else ""
+        def getDate(str : String) = {
+            println("--------- getDate" + str)
+            try {
+                formatter.parse(str)
+            } catch {
+                case e : NullPointerException => null
+                case e : java.text.ParseException => null
+            }
+        }
+        SHtml.text(strValue, str => setter(getDate(str))) % ("id" -> "dob")
     }
 
     def safeGet[T](value : => T, default : T) : T = {
@@ -80,27 +104,33 @@ object PageUtil {
         )
     }
 
-    def createField[T](parentName : String, name : String, validations : Validations[T], invalidClass : Option[String], field : NodeSeq)(implicit xhtml : NodeSeq) : Seq[BindParam] = {
+    def createField[T](parentName : String, name : String, validations : Validators[T], invalidClass : Option[String], field : NodeSeq)(implicit xhtml : NodeSeq) : Seq[BindParam] = {
         createField(parentName, name, validations.is(name), invalidClass, field)(xhtml)
     }
 
-    class Validations[T]
+    case class Validator[T](validator : T => Boolean,
+                            component : String,
+                            msg : Option[String])
+    
+    class Validators[T]
     extends RequestVar[HashMap[String, Boolean]] (
         new HashMap[String, Boolean] {
             override def default(key: String): Boolean = true
         }
     ) {
-        case class ValidatorDesc(validator : T => Boolean, 
-                                 component : String,
-                                 msg : Option[String]);
-        var validators : List[ValidatorDesc] = Nil
+        var validators : List[Validator[T]] = Nil
+        
+        def <<( params : (String, T => Boolean, Option[String])) = params match {
+            case (a, b, c) => addValidator(a, b, c)
+        }
 
         def addValidator(component : String, v : T => Boolean, msg : Option[String]) = {
-            validators = validators + ValidatorDesc(v, component, msg)
+            Log.info("Adding validator for " + component)
+            validators = validators + Validator(v, component, msg)
         }
 
         def doValidation(obj : T) : Boolean = {
-            Log.info("Processing validations for " + obj)
+            Log.info("Processing validations for " + obj + ", there are " + validators.size + " validators.")
             var valid = true
             for(validator <- validators) {
                 if(validator.validator(obj) == false) {
@@ -110,6 +140,15 @@ object PageUtil {
                 }
             }
             valid
+        }
+
+        def valid_?(entity : T)(code : => Unit) = {
+            println("valid_?")
+            if(this.doValidation(entity) == true) {
+                println("valid_? true -> code")
+                code
+                println("valid_? true -> code done")
+            }
         }
     }
 

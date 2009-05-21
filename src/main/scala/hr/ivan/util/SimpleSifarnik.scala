@@ -8,6 +8,8 @@ import S._
 import util._
 import Helpers._
 
+import PageUtil._
+
 trait SimpleSifarnik[T] extends StatefulSnippet {
 
     def newInstance : T
@@ -86,9 +88,12 @@ trait SimpleSifarnik[T] extends StatefulSnippet {
         }
 
         // ako smo iza zadnjeg odi stranicu manje
+        println("Prije while petlje", first, entityListCount.is.get)
         while(first >= entityListCount.is.get) {
             first_ = first_ - pageSize
+            println("U petlji smanjem first na", first_)
         }
+        if(first < 0) first_ = 0
 
         bind("page", xhtml,
              "first" -> ((onlyOnePage_? || onFirstPage_?) match {
@@ -120,4 +125,9 @@ trait SimpleSifarnik[T] extends StatefulSnippet {
      */
     def statelessLink(to : String, func : ()=>Any, body : NodeSeq) : NodeSeq = SHtml.link(to, func, body)
     def statefullLink(to : String, func : ()=>Any, body : NodeSeq) : NodeSeq = this.link(to, func, body)
+
+    /**
+     */
+    object validation extends Validators[T]
+
 }

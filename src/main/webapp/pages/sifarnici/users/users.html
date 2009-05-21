@@ -1,10 +1,15 @@
 <lift:surround with="default" at="content">
-    <head><title><lift:loc>Users</lift:loc></title></head>
+
+    <head>
+        <title><lift:loc>Users</lift:loc></title>
+    </head>
+    <lift:util.jQueryDatePickerIncludes />
 
     <table>
         <tr>
             <th><lift:loc>First Name</lift:loc></th>
             <th><lift:loc>Last Name</lift:loc></th>
+            <th><lift:loc>Date of birth</lift:loc></th>
             <th><lift:loc>Ured</lift:loc></th>
             <th><lift:loc>Role</lift:loc></th>
             <th></th>
@@ -14,6 +19,7 @@
             <tr>
                 <td><user:firstName /></td>
                 <td><user:lastName /></td>
+                <td><user:dob /></td>
                 <td><user:ured /></td>
                 <td>
                     <ul>
@@ -44,6 +50,10 @@
                     <td><user:lastName /><lift:Msg id="lastNameMsg" /></td>
                 </tr>
                 <tr>
+                    <td><user:dobLabel>Date of birth</user:dobLabel></td>
+                    <td><user:dob /><lift:Msg id="dobMsg" /></td>
+                </tr>
+                <tr>
                     <td><lift:loc>Ured</lift:loc></td>
                     <td><user:ured /><lift:Msg id="uredMsg" /></td>
                 </tr>
@@ -71,5 +81,14 @@
             </table>
         </div>
     </lift:Users.add>
+
+    <script type="text/javascript">
+        jQuery(function () {
+            jQuery('#dob').datePicker({startDate:'0001-01-01',
+                dateFormat : 'yyyy-mm-dd',
+                numberOfMonths: [2, 3],
+                constrainInput: true });
+        })
+    </script>
 
 </lift:surround>

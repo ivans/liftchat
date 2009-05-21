@@ -44,13 +44,11 @@ class Role extends SimpleSifarnik[Rola] {
 
         val current = entity
 
-        object validation extends Validations[Rola] {
-            addValidator("naziv", _.naziv.length != 0, Some("Naziv ne može biti prazan"))
-            addValidator("naziv", _.naziv.length > 3, Some("Naziv mora biti duži od 3 znaka"))
-        }
+        validation << ("naziv", _.naziv.length != 0, Some("Naziv ne može biti prazan"))
+        validation << ("naziv", _.naziv.length > 3, Some("Naziv mora biti duži od 3 znaka"))
 
         def doAdd () = {
-            if(validation.doValidation(entity) == true) {
+            validation.valid_?(entity) {
                 trySavingEntity[Rola](entity, Some("Nova rola dodana"), Some("Updatana rola"))(Model)
                 redirectTo("/pages/role/list")
             }

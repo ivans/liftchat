@@ -38,12 +38,10 @@ class Uredi extends SimpleSifarnik[Ured] {
 
     override def add (implicit xhtml : NodeSeq) : NodeSeq = {
 
-        object validation extends Validations[Ured] {
-            addValidator("naziv", _.naziv.length != 0, Some("Naziv ne može biti prazan"))
-        }
+        validation << ("naziv", _.naziv.length != 0, Some("Naziv ne može biti prazan"))
 
         def doAdd () = {
-            if(validation.doValidation(entity) == true) {
+            validation.valid_?(entity) {
                 trySavingEntity[Ured](entity, Some("Novi ured dodan"), Some("Spremljene promjene na uredu"))(Model)
                 redirectTo("/pages/sifarnici/uredi/uredi")
             }

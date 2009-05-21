@@ -10,6 +10,18 @@ import Helpers._
 
 class Test {
 
+    def xory(xhtml : NodeSeq) : NodeSeq = {
+        val broj = rand.nextInt(100)
+        broj < 50 match {
+            case true => <span>Broj manji od 50 == {broj}</span>
+            case false => <span>Broj veći od 50 == {broj}</span>
+        }
+    }
+
+    def bindBroj(xhtml : NodeSeq, broj : Int) = {
+        bind("br", xhtml, "broj" -> broj.toString)
+    }
+
     var brojevi = <span>{
             (1 to 100).flatMap(x => <span>{x}::</span>)
         }</span>
