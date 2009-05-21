@@ -51,6 +51,7 @@ trait SimpleSifarnik[T] extends StatefulSnippet {
 
     def pager(xhtml : NodeSeq) : NodeSeq = {
         println ("creating pager. first = " + first_ + ", pageSize = " + pageSize_)
+        println ("creating pager. lastPage = " + lastPage + ", currentPage = " + currentPage)
 
         def actionFirst = {
             first_ = 0
@@ -74,7 +75,7 @@ trait SimpleSifarnik[T] extends StatefulSnippet {
             println("actionLast: first = " + first_)
         }
 
-        def lastPage = entityListCount.is.get / pageSize - 1
+        def lastPage = entityListCount.is.get / pageSize
         def currentPage = first / pageSize
         def lastFirst = lastPage * pageSize
         def onLastPage_? = lastPage == currentPage
