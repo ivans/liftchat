@@ -53,6 +53,7 @@ trait SimpleSifarnik[T] extends StatefulSnippet {
 
     def pager(xhtml : NodeSeq) : NodeSeq = {
         println ("creating pager. first = " + first_ + ", pageSize = " + pageSize_)
+        println ("creating pager. lastPage = " + lastPage + ", currentPage = " + currentPage)
 
         def actionFirst = {
             first_ = 0
