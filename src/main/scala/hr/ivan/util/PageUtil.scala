@@ -47,7 +47,7 @@ object PageUtil {
     def outputDate(date : => Date)(implicit formatter : java.text.SimpleDateFormat) : Text = {
         Text(safeGet(formatter.format(date), ""))
     }
-    
+
     def inputText(id : String, value : String, setter : (String) => Any) : NodeSeq = {
         SHtml.text(value, setter(_)) % ("id" -> id)
     }
@@ -92,7 +92,7 @@ object PageUtil {
 
     /* TODO: popraviti kad Scala dobije default vrijednosti
      */
-    def createField(parentName : String, name : String, valid : Boolean, invalidClass : Option[String], field : NodeSeq)(implicit xhtml : NodeSeq) : Seq[BindParam] = {
+    def createField(parentName : String, name : String, valid : Boolean, field : NodeSeq)(implicit xhtml : NodeSeq) : Seq[BindParam] = {
         val clazz = if(!valid) invalidClass.getOrElse("invalid") else ""
         val nameLabel = name + "Label"
         val nameMsg = name + "Msg"
@@ -104,9 +104,18 @@ object PageUtil {
         )
     }
 
-    def createField[T](parentName : String, name : String, validations : Validators[T], invalidClass : Option[String], field : NodeSeq)(implicit xhtml : NodeSeq) : Seq[BindParam] = {
-        createField(parentName, name, validations.is(name), invalidClass, field)(xhtml)
+    def createField[T](parentName : String, name : String, validations : Validators[T], field : NodeSeq)(implicit xhtml : NodeSeq) : Seq[BindParam] = {
+        createField(parentName, name, validations.is(name), field)(xhtml)
     }
+
+    def createInputTextField[T](parentName : String, name : String, 
+                                validations : Validators[T], 
+                                value : String, setter : (String) => Any)
+    (implicit xhtml : NodeSeq): Seq[BindParam] = {
+        createField(parentName, name, validations, SHtml.text(value, setter))
+    }
+
+    var invalidClass = Some("validationError")
 
     case class Validator[T](validator : T => Boolean,
                             component : String,

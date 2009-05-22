@@ -68,16 +68,17 @@ class Users extends SimpleSifarnik[User] {
 
         def bindLista = Nil +
         ("id" -> SHtml.hidden(() => entityVar(currentUser))) ++
-        createField("user", "firstName", true, None, SHtml.text(entity.firstName, entity.firstName = _)) ++
-        createField("user", "lastName", validation, Some("validationError"), SHtml.text(entity.lastName, entity.lastName = _)) ++
-        createField("user", "dob", true, None, inputDate("dob", entity.dateOfBirth, entity.dateOfBirth = _)) ++
-        createField("user", "ured", true, None,
+        createInputTextField("user", "firstName", validation, entity.firstName, entity.firstName = _) ++
+        createField("user", "firstName", true, SHtml.text(entity.firstName, entity.firstName = _)) ++
+        createField("user", "lastName", validation, SHtml.text(entity.lastName, entity.lastName = _)) ++
+        createField("user", "dob", true, inputDate("dob", entity.dateOfBirth, entity.dateOfBirth = _)) ++
+        createField("user", "ured", true, 
                     SHtml.select(choicesUredi,  selectedUredId,
                                  uredId => {
                     entity.ured = getFromEM(classOf[Ured], uredId, Model).getOrElse(null)
                 })
         ) ++
-        createField("user", "listRole", validation, Some("validationError"),
+        createField("user", "listRole", validation,
                     entity.listRoleUsera.flatMap(rk =>
                 bind("rola", chooseTemplate("user", "listRole", xhtml),
                      "naziv" -> rk.rola.naziv,
@@ -86,7 +87,7 @@ class Users extends SimpleSifarnik[User] {
                         })
                 ))
         ) ++
-        createField("user", "rolaDodaj", validation, Some("validationError"),
+        createField("user", "rolaDodaj", validation,
                     {SHtml.select(choicesRole, Some(""),
                                   rolaId => { selectedRola = getFromEM(classOf[Rola], rolaId, Model) }) ++
                      SHtml.submit(?("Dodaj rolu"), () => selectedRola match {

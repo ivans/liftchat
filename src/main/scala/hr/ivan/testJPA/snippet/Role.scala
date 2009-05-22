@@ -56,9 +56,9 @@ class Role extends SimpleSifarnik[Rola] {
 
         def bindLista = Nil +
         ("id" -> SHtml.hidden(() => entityVar(current))) ++
-        createField("rola", "naziv", validation, Some("validationError"),
+        createField("rola", "naziv", validation,
                     SHtml.text(entity.naziv, entity.naziv = _) % ("id" -> "naziv")) ++
-        createField("rola", "aktivan", true, None,
+        createField("rola", "aktivan", true,
                     SHtml.checkbox(entity.aktivan.getOrElse(false), entity.aktivan = _)) +
         ("submit" -> SHtml.submit(?("Save"), doAdd))
 

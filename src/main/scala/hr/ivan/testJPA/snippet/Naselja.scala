@@ -60,13 +60,13 @@ class Naselja extends SimpleSifarnik[Naselje] {
 
         def bindLista = Nil +
         ("id" -> SHtml.hidden(() => entityVar(entity))) ++
-        createField("naselje", "naziv", validation, Some("validationError"),
+        createField("naselje", "naziv", validation,
                     SHtml.text(entity.naziv, entity.naziv = _)) ++
-        createField("naselje", "sifra", validation, Some("validationError"),
+        createField("naselje", "sifra", validation,
                     SHtml.text(entity.sifra, entity.sifra = _)) ++
-        createField("naselje", "mbr", true, None,
+        createField("naselje", "mbr", true,
                     SHtml.text(safeGet(entity.mbr, ""), entity.mbr = _)) ++
-        createField("naselje", "aktivan", true, None,
+        createField("naselje", "aktivan", true,
                     SHtml.checkbox(entity.aktivan.getOrElse(false), entity.aktivan = _)) +
         ("submit" -> SHtml.submit(?("Save"), doAdd))
 
