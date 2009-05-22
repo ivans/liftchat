@@ -37,6 +37,10 @@
             <query><![CDATA[from User u]]>
             </query>
         </named-query>
+       <named-query name="findAllUsersCount">
+            <query><![CDATA[select count(u.id) from User u]]>
+            </query>
+        </named-query>
     </entity>
 
     <entity class="Ured">

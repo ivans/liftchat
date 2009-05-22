@@ -44,6 +44,8 @@ class Naselja extends SimpleSifarnik[Naselje] {
         )
     }
 
+    /** Add / edit naselje
+     */
     override def add (implicit xhtml : NodeSeq) : NodeSeq = {
 
         def doAdd () = {
@@ -71,7 +73,7 @@ class Naselja extends SimpleSifarnik[Naselje] {
         bind("naselje", xhtml, bindLista:_*)
     }
 
-    /** Search dio
+    /** Search forma
      */
     var searchNaziv = ""
 

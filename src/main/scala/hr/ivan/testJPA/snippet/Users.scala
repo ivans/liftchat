@@ -20,22 +20,24 @@ import Model._
 class Users extends SimpleSifarnik[User] {
 
     def newInstance = new User
+
+    override def fetchEntityList = UserDAO allUseri
+    override def fetchEntityListCount = Some(UserDAO.allUseriCount toInt)
     
     override def list (implicit xhtml : NodeSeq) : NodeSeq = {
-        val users = Model.createNamedQuery[User]("findAllUsers") getResultList()
-        users.flatMap(user => {
-                bind("user", xhtml,
-                     "firstName" -> outputText(user.firstName),
-                     "lastName" -> outputText(user.lastName),
-                     "dob" -> outputDate(user.dateOfBirth),
-                     "ured" -> outputText(user.ured.naziv),
-                     "edit" -> SHtml.link("/pages/sifarnici/users/users", () => entityVar(user), Text(?("Edit"))),
-                     "listRole" -> user.listRoleUsera.flatMap(rk =>
-                        bind("rola", chooseTemplate("user", "listRole", xhtml),
-                             "naziv" -> rk.rola.naziv)
-                    ),
-                     "delete" -> deleteLink(classOf[User], user.id, "/pages/sifarnici/users/users", Text(?("Delete")), Some(doAfterDelete _), Model, statelessLink),
-                )
+        createList[User](entityList.get, "user",
+                         user => {
+                "firstName" -> outputText(user.firstName) ::
+                "lastName" -> outputText(user.lastName) ::
+                "dob" -> outputDate(user.dateOfBirth) ::
+                "ured" -> outputText(user.ured.naziv) ::
+                "edit" -> SHtml.link("/pages/sifarnici/users/users", () => entityVar(user), Text(?("Edit"))) ::
+                "listRole" -> user.listRoleUsera.flatMap(rk =>
+                    bind("rola", chooseTemplate("user", "listRole", xhtml),
+                         "naziv" -> rk.rola.naziv)
+                ) ::
+                "delete" -> deleteLink(classOf[User], user.id, "/pages/sifarnici/users/users", Text(?("Delete")), Some(doAfterDelete _), Model, statelessLink) ::
+                Nil
             }
         )
     }
@@ -55,8 +57,6 @@ class Users extends SimpleSifarnik[User] {
         }
 
         def doDeleteRole(ru : RolaUser) = {
-            Log.info("doDeleteRole ru = " + ru)
-            Log.info("doDeleteRole user = " + entity)
             entity._listRoleUsera.remove(ru)
         }
 
