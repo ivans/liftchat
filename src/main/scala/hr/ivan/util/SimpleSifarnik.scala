@@ -156,4 +156,31 @@ trait SimpleSifarnik[T <: AnyRef] extends StatefulSnippet {
         createField(parentName, name, validation, SHtml.text(value, setter))
     }
 
+    /** Komponente, forme, i slično
+     */
+    abstract class Component {
+        def toNodeSeq : Seq[BindParam]
+    }
+    case class InputText(parent : String, name : String, value : String, setter : (String) => Any)(implicit xhtml : NodeSeq) extends Component {
+        override def toNodeSeq =
+        createField(parent, name, validation,
+                    SHtml.text(safeGet(value, ""), setter))
+    }
+    case class InputCheckBox(parent : String, name : String, value : Boolean, setter : (Boolean) => Any)(implicit xhtml : NodeSeq) extends Component {
+        override def toNodeSeq = createField(parent, name, validation,
+                                             SHtml.checkbox(value, setter))
+    }
+    case class Submit(name : String, label : String, method : () => Any) extends Component {
+        override def toNodeSeq = List(name -> SHtml.submit(?(label), method))
+    }
+    case class Id(name : String) extends Component {
+        override def toNodeSeq = List(name -> SHtml.hidden(() => entityVar(entity)))
+    }
+    def createForm(name : String, xhtml : NodeSeq, comp : Seq[Component]) = {
+        bind(name, xhtml, comp.flatMap(x => x.toNodeSeq):_*)
+    }
+    case class Form(name : String, xhtml : NodeSeq, var comp : Seq[Component]) {
+        def apply() = bind(name, xhtml, comp.flatMap(x => x.toNodeSeq):_*)
+    }
+
 }

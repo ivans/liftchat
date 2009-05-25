@@ -60,28 +60,6 @@ class Naselja extends SimpleSifarnik[Naselje] {
             }
         }
 
-        abstract class Component {
-            def toNodeSeq : Seq[BindParam]
-        }
-        case class InputText(parent : String, name : String, value : String, setter : (String) => Any) extends Component {
-            override def toNodeSeq =
-            createField(parent, name, validation,
-                        SHtml.text(safeGet(value, ""), setter))
-        }
-        case class InputCheckBox(parent : String, name : String, value : Boolean, setter : (Boolean) => Any) extends Component {
-            override def toNodeSeq = createField(parent, name, validation,
-                                                 SHtml.checkbox(value, setter))
-        }
-        case class Submit(name : String, label : String, method : () => Any) extends Component {
-            override def toNodeSeq = List(name -> SHtml.submit(?(label), method))
-        }
-        case class Id(name : String) extends Component {
-            override def toNodeSeq = List(name -> SHtml.hidden(() => entityVar(entity)))
-        }
-        def createForm(name : String, xhtml : NodeSeq, comp : Seq[Component]) = {
-            bind(name, xhtml, comp.flatMap(x => x.toNodeSeq):_*)
-        }
-
         val id = Id("id")
         val naziv = InputText("naselje", "naziv", entity.naziv, entity.naziv = _)
         val sifra = InputText("naselje", "sifra", entity.sifra, entity.sifra = _)
@@ -89,7 +67,9 @@ class Naselja extends SimpleSifarnik[Naselje] {
         val aktivan = InputCheckBox("naselje", "aktivan", entity.aktivan.getOrElse(false), entity.aktivan = _)
         val submit = Submit("submit", "Save", doAdd)
 
-        createForm("naselje", xhtml, List(id, naziv, sifra, mbr, aktivan, submit))
+        val forma = Form("naselje", xhtml, List(id, naziv, sifra, mbr, aktivan, submit))
+
+        forma()
     }
 
     /** Search forma
