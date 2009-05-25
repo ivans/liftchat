@@ -68,7 +68,6 @@ class Naselja extends SimpleSifarnik[Naselje] {
         val submit = Submit("submit", "Save", doAdd)
 
         val forma = Form("naselje", xhtml, List(id, naziv, sifra, mbr, aktivan, submit))
-
         forma()
     }
 
