@@ -9,6 +9,8 @@ import _root_.net.liftweb.mapper.{DB, ConnectionManager, Schemifier, DefaultConn
 import _root_.java.sql.{Connection, DriverManager}
 import _root_.javax.servlet.http.{HttpServletRequest}
 
+import scala.xml.Text
+
 import S.?
 
 /**
@@ -75,6 +77,16 @@ class Boot {
         LiftRules.early.append(makeUtf8)
 
         LiftRules.resourceNames = "messages" :: Nil
+
+        LiftRules.dispatch.prepend {
+            case Req(List("x", x,"y", y), _, _) =>
+                val brojevi = x.toInt to y.toInt
+                () => Full(XmlResponse(
+                        <brojevi>
+                            {brojevi.map(z => <broj>{z}</broj>)}
+                        </brojevi>
+                    ))
+        }
 
         S.addAround(DB.buildLoanWrapper)
     }
