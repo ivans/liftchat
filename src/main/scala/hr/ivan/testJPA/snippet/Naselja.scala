@@ -48,6 +48,13 @@ class Naselja extends SimpleSifarnik[Naselje] {
      */
     override def add (implicit xhtml : NodeSeq) : NodeSeq = {
 
+        val id = S.param("id")
+        id match {
+            case Full(broj) =>
+                entityVar(getFromEM(classOf[Naselje], broj, Model).getOrElse(newInstance))
+            case Empty =>
+        }
+
         def doAdd () = {
             validation << ("naziv", _.naziv.length != 0, Some("Naziv ne može biti prazan"))
             validation << ("sifra", _.sifra.length != 0, Some("Šifra ne može biti prazan"))

@@ -107,7 +107,7 @@ object EntityUtil {
         if(x == 0 || x.length == 0) {
             None
         } else {
-            Some(model.getReference(klasa, new java.lang.Long(x)))
+            model.find(klasa, new java.lang.Long(x))
         }
     }
 
