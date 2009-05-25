@@ -108,13 +108,6 @@ object PageUtil {
         createField(parentName, name, validations.is(name), field)(xhtml)
     }
 
-    def createInputTextField[T](parentName : String, name : String, 
-                                validations : Validators[T], 
-                                value : String, setter : (String) => Any)
-    (implicit xhtml : NodeSeq): Seq[BindParam] = {
-        createField(parentName, name, validations, SHtml.text(value, setter))
-    }
-
     var invalidClass = Some("validationError")
 
     case class Validator[T](validator : T => Boolean,

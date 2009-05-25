@@ -68,7 +68,7 @@ class Users extends SimpleSifarnik[User] {
 
         def bindLista = Nil +
         ("id" -> SHtml.hidden(() => entityVar(currentUser))) ++
-        createInputTextField("user", "firstName", validation, entity.firstName, entity.firstName = _) ++
+        createInputTextField("user", "firstName", entity.firstName, entity.firstName = _) ++
         createField("user", "firstName", true, SHtml.text(entity.firstName, entity.firstName = _)) ++
         createField("user", "lastName", validation, SHtml.text(entity.lastName, entity.lastName = _)) ++
         createField("user", "dob", true, inputDate("dob", entity.dateOfBirth, entity.dateOfBirth = _)) ++

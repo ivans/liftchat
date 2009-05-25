@@ -144,8 +144,16 @@ trait SimpleSifarnik[T <: AnyRef] extends StatefulSnippet {
     def statelessLink(to : String, func : ()=>Any, body : NodeSeq) : NodeSeq = SHtml.link(to, func, body)
     def statefullLink(to : String, func : ()=>Any, body : NodeSeq) : NodeSeq = this.link(to, func, body)
 
-    /**
+    /** Validacija
      */
-    object validation extends Validators[T]
+    implicit object validation extends Validators[T]
+
+    /** Kreiranje polja i sl
+     */
+    def createInputTextField[T](parentName : String, name : String,
+                                value : String, setter : (String) => Any)
+    (implicit xhtml : NodeSeq): Seq[BindParam] = {
+        createField(parentName, name, validation, SHtml.text(value, setter))
+    }
 
 }

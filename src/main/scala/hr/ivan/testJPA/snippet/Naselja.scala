@@ -60,19 +60,36 @@ class Naselja extends SimpleSifarnik[Naselje] {
             }
         }
 
-        def bindLista = Nil +
-        ("id" -> SHtml.hidden(() => entityVar(entity))) ++
-        createField("naselje", "naziv", validation,
-                    SHtml.text(entity.naziv, entity.naziv = _)) ++
-        createField("naselje", "sifra", validation,
-                    SHtml.text(entity.sifra, entity.sifra = _)) ++
-        createField("naselje", "mbr", true,
-                    SHtml.text(safeGet(entity.mbr, ""), entity.mbr = _)) ++
-        createField("naselje", "aktivan", true,
-                    SHtml.checkbox(entity.aktivan.getOrElse(false), entity.aktivan = _)) +
-        ("submit" -> SHtml.submit(?("Save"), doAdd))
+        abstract class Component {
+            def toNodeSeq : Seq[BindParam]
+        }
+        case class InputText(parent : String, name : String, value : String, setter : (String) => Any) extends Component {
+            override def toNodeSeq =
+            createField(parent, name, validation,
+                        SHtml.text(safeGet(value, ""), setter))
+        }
+        case class InputCheckBox(parent : String, name : String, value : Boolean, setter : (Boolean) => Any) extends Component {
+            override def toNodeSeq = createField(parent, name, validation,
+                                                 SHtml.checkbox(value, setter))
+        }
+        case class Submit(name : String, label : String, method : () => Any) extends Component {
+            override def toNodeSeq = List(name -> SHtml.submit(?(label), method))
+        }
+        case class Id(name : String) extends Component {
+            override def toNodeSeq = List(name -> SHtml.hidden(() => entityVar(entity)))
+        }
+        def createForm(name : String, xhtml : NodeSeq, comp : Seq[Component]) = {
+            bind(name, xhtml, comp.flatMap(x => x.toNodeSeq):_*)
+        }
 
-        bind("naselje", xhtml, bindLista:_*)
+        val id = Id("id")
+        val naziv = InputText("naselje", "naziv", entity.naziv, entity.naziv = _)
+        val sifra = InputText("naselje", "sifra", entity.sifra, entity.sifra = _)
+        val mbr = InputText("naselje", "mbr", entity.mbr, entity.mbr = _)
+        val aktivan = InputCheckBox("naselje", "aktivan", entity.aktivan.getOrElse(false), entity.aktivan = _)
+        val submit = Submit("submit", "Save", doAdd)
+
+        createForm("naselje", xhtml, List(id, naziv, sifra, mbr, aktivan, submit))
     }
 
     /** Search forma
