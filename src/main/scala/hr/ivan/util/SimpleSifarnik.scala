@@ -9,8 +9,11 @@ import util._
 import Helpers._
 
 import PageUtil._
+import EntityUtil._
 
-trait SimpleSifarnik[T] extends StatefulSnippet {
+import hr.ivan.testJPA.model.Model
+
+trait SimpleSifarnik[T <: AnyRef] extends StatefulSnippet {
 
     def newInstance : T
 
@@ -36,6 +39,21 @@ trait SimpleSifarnik[T] extends StatefulSnippet {
     def list (implicit xhtml : NodeSeq) : NodeSeq = Nil
     def add (implicit xhtml : NodeSeq) : NodeSeq = Nil
     def search(implicit xhtml : NodeSeq) : NodeSeq = Nil
+
+    def tryLoadingEntityByIdFromParam(param : String) = {
+        val id = S.param(param)
+        try {
+            id match {
+                case Full(strId) => tryLoadingEntityById(strId.toLong)
+                case Empty =>
+            }
+        }
+    }
+
+    def tryLoadingEntityById(id : Long) = {
+        lazy val newObj = newInstance
+        entityVar(getFromEM(newObj.getClass.asInstanceOf[Class[T]], id, Model).getOrElse(newObj))
+    }
 
     /** Stvari vezane uz pager
      */

@@ -99,7 +99,7 @@ object EntityUtil {
     def getFromEM[T <: AnyRef](klasa : Class[T], x : Long, model : LocalEMF with RequestVarEM) : Option[T] = {
         x match {
             case 0 => None
-            case x => Some(model.getReference(klasa, x))
+            case x => model.find(klasa, x)
         }
     }
 
