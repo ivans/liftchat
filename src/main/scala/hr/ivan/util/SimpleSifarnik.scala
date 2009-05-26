@@ -161,6 +161,9 @@ trait SimpleSifarnik[T <: AnyRef] extends StatefulSnippet {
     abstract class Component {
         def toNodeSeq : Seq[BindParam]
     }
+    case class Id(name : String) extends Component {
+        override def toNodeSeq = List(name -> SHtml.hidden(() => entityVar(entity)))
+    }
     case class InputText(parent : String, name : String, value : String, setter : (String) => Any)(implicit xhtml : NodeSeq) extends Component {
         override def toNodeSeq =
         createField(parent, name, validation,
@@ -173,14 +176,23 @@ trait SimpleSifarnik[T <: AnyRef] extends StatefulSnippet {
     case class Submit(name : String, label : String, method : () => Any) extends Component {
         override def toNodeSeq = List(name -> SHtml.submit(?(label), method))
     }
-    case class Id(name : String) extends Component {
-        override def toNodeSeq = List(name -> SHtml.hidden(() => entityVar(entity)))
-    }
-    def createForm(name : String, xhtml : NodeSeq, comp : Seq[Component]) = {
-        bind(name, xhtml, comp.flatMap(x => x.toNodeSeq):_*)
-    }
-    case class Form(name : String, xhtml : NodeSeq, var comp : Seq[Component]) {
-        def apply() = bind(name, xhtml, comp.flatMap(x => x.toNodeSeq):_*)
+    case class Form(formName : String, xhtml : NodeSeq, var comp : List[Component]) {
+
+        def this(formName : String, xhtml : NodeSeq) = this(formName, xhtml, Nil)
+
+        def !! = bind(formName, xhtml, comp.flatMap(x => x.toNodeSeq):_*)
+
+        def << (c : Component) = comp = c :: comp
+
+        def id(name : String) = Id(name)
+
+        def inputText(name : String, value : String, setter : (String) => Any)(implicit xhtml : NodeSeq) = 
+        InputText(formName, name, value, setter)(xhtml)
+
+        def inputCheckBox(name : String, value : Boolean, setter : (Boolean) => Any)(implicit xhtml : NodeSeq) =
+        InputCheckBox(formName, name, value, setter)(xhtml)
+
+        def submit(name : String, label : String, method : () => Any) = Submit(name, label, method)
     }
 
 }

@@ -60,15 +60,15 @@ class Naselja extends SimpleSifarnik[Naselje] {
             }
         }
 
-        val id = Id("id")
-        val naziv = InputText("naselje", "naziv", entity.naziv, entity.naziv = _)
-        val sifra = InputText("naselje", "sifra", entity.sifra, entity.sifra = _)
-        val mbr = InputText("naselje", "mbr", entity.mbr, entity.mbr = _)
-        val aktivan = InputCheckBox("naselje", "aktivan", entity.aktivan.getOrElse(false), entity.aktivan = _)
-        val submit = Submit("submit", "Save", doAdd)
+        val forma = new Form("naselje", xhtml)
+        forma << forma.id("id")
+        forma << forma.inputText("naziv", entity.naziv, entity.naziv = _)
+        forma << forma.inputText("sifra", entity.sifra, entity.sifra = _)
+        forma << forma.inputText("mbr", entity.mbr, entity.mbr = _)
+        forma <<  forma.inputCheckBox("aktivan", entity.aktivan.getOrElse(false), entity.aktivan = _)
+        forma << forma.submit("submit", "Save", doAdd)
 
-        val forma = Form("naselje", xhtml, List(id, naziv, sifra, mbr, aktivan, submit))
-        forma()
+        forma !!
     }
 
     /** Search forma
@@ -81,5 +81,4 @@ class Naselja extends SimpleSifarnik[Naselje] {
              "submit" -> SHtml.submit(?("Traži"), () => {})
         )
     }
-
 }
