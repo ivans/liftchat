@@ -27,7 +27,7 @@ class Naselja extends SimpleSifarnik[Naselje] {
 
     def newInstance = new Naselje
 
-    override def fetchEntityList = NaseljeDAO.findNaseljaByNaziv(first, pageSize, searchNaziv)
+    override def fetchEntityList = NaseljeDAO.findNaseljaByNaziv(first, pageSize, searchNaziv).filter(_.sifra contains searchSifra)
     override def fetchEntityListCount = Some(NaseljeDAO.naseljaCountByNaziv(searchNaziv).toInt)
 
     override def list (implicit xhtml : NodeSeq) : NodeSeq = {
@@ -74,10 +74,12 @@ class Naselja extends SimpleSifarnik[Naselje] {
     /** Search forma
      */
     var searchNaziv = ""
+    var searchSifra = ""
 
     override def search(implicit xhtml : NodeSeq) : NodeSeq = {
         val forma = new Form("s", xhtml)
         forma inputText("naziv", searchNaziv, searchNaziv = _)
+        forma inputText("sifra", searchSifra, searchSifra = _)
         forma submit("submit", "Traži", () => {})
         forma !!
     }
