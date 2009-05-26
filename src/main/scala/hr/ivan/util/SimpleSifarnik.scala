@@ -184,15 +184,15 @@ trait SimpleSifarnik[T <: AnyRef] extends StatefulSnippet {
 
         def << (c : Component) = comp = c :: comp
 
-        def id(name : String) = Id(name)
+        def id(name : String) = this << Id(name)
 
         def inputText(name : String, value : String, setter : (String) => Any)(implicit xhtml : NodeSeq) = 
-        InputText(formName, name, value, setter)(xhtml)
+        this << InputText(formName, name, value, setter)(xhtml)
 
         def inputCheckBox(name : String, value : Boolean, setter : (Boolean) => Any)(implicit xhtml : NodeSeq) =
-        InputCheckBox(formName, name, value, setter)(xhtml)
+        this << InputCheckBox(formName, name, value, setter)(xhtml)
 
-        def submit(name : String, label : String, method : () => Any) = Submit(name, label, method)
+        def submit(name : String, label : String, method : () => Any) = this << Submit(name, label, method)
     }
 
 }

@@ -61,12 +61,12 @@ class Naselja extends SimpleSifarnik[Naselje] {
         }
 
         val forma = new Form("naselje", xhtml)
-        forma << forma.id("id")
-        forma << forma.inputText("naziv", entity.naziv, entity.naziv = _)
-        forma << forma.inputText("sifra", entity.sifra, entity.sifra = _)
-        forma << forma.inputText("mbr", entity.mbr, entity.mbr = _)
-        forma <<  forma.inputCheckBox("aktivan", entity.aktivan.getOrElse(false), entity.aktivan = _)
-        forma << forma.submit("submit", "Save", doAdd)
+        forma id("id")
+        forma inputText("naziv", entity.naziv, entity.naziv = _)
+        forma inputText("sifra", entity.sifra, entity.sifra = _)
+        forma inputText("mbr", entity.mbr, entity.mbr = _)
+        forma inputCheckBox("aktivan", entity.aktivan.getOrElse(false), entity.aktivan = _)
+        forma submit("submit", "Save", doAdd)
 
         forma !!
     }
@@ -76,9 +76,9 @@ class Naselja extends SimpleSifarnik[Naselje] {
     var searchNaziv = ""
 
     override def search(implicit xhtml : NodeSeq) : NodeSeq = {
-        bind("s", xhtml,
-             "naziv" -> SHtml.text(searchNaziv, searchNaziv = _),
-             "submit" -> SHtml.submit(?("Traži"), () => {})
-        )
+        val forma = new Form("s", xhtml)
+        forma inputText("naziv", searchNaziv, searchNaziv = _)
+        forma submit("submit", "Traži", () => {})
+        forma !!
     }
 }
